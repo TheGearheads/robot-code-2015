@@ -10,6 +10,7 @@
 
 #include "WPILib.h"
 #include "Util.h"
+#include "ArmPIDSource.h"
 
 class Arm {
 
@@ -19,6 +20,7 @@ class Arm {
 
 	CANTalon* motorLeft;
 	CANTalon* motorRight;
+	PIDController* controller;
 
 public:
 	Arm();
