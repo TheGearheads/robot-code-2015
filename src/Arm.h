@@ -13,19 +13,18 @@
 
 class Arm {
 
-	const static int motorAID = 34;	//Motor a ID
-	const static int motorBID = 35;	//Motor b ID
-	const static int potentiometerChannel = 0;
-	const static short potentiometerMin = 0;
-	const static short potentiometerMax = 4095;
+	const static int motorLeftID = 34;	//Motor a ID
+	const static int motorRightID = 35;	//Motor b ID
+	typedef enum { kLeft, kRight, kInvalid } Side;
 
-	CANTalon* motors[2];
+	CANTalon* motorLeft;
+	CANTalon* motorRight;
 
 public:
 	Arm();
 	void SetPosition(float position);
 	void Move(float speed);
-	float GetPosition();
+	float GetPosition(Arm::Side side);
 };
 
 
