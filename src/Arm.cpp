@@ -11,7 +11,6 @@ Arm::Arm() {
 	motorLeft = new CANTalon(motorLeftID);
 	motorRight = new CANTalon(motorRightID);
 	motorLeft->SetControlMode(CANTalon::kPosition);
-	motorRight->SetControlMode();
 	motorRight->Set(motorLeftID);
 	controller = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
 }

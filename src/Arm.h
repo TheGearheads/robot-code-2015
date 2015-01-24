@@ -25,7 +25,6 @@ class Arm {
 public:
 	Arm();
 	void SetPosition(float position);
-	void Move(float speed);
 	float GetPosition(Arm::Side side);
 };
 

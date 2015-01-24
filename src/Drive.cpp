@@ -8,7 +8,9 @@
 
 #include "Drive.h"
 
-Drive::Drive() : robotDrive(frontLeftID, rearLeftID, frontRightID, rearRightID) {
+Drive::Drive() : frontLeftMotor(frontLeftID), rearLeftMotor(rearLeftID),
+frontRightMotor(frontRightID), rearRightMotor(rearRightID),
+robotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor) {
 
 		robotDrive.SetExpiration(0.1);
 		robotDrive.SetInvertedMotor(RobotDrive::kFrontRightMotor, true);

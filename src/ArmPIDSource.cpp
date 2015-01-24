@@ -7,8 +7,7 @@
 
 #include "ArmPIDSource.h"
 
-ArmPIDSource::ArmPIDSource(CANTalon primary, CANTalon secondary) : primary(primary),
-secondary(secondary) {}
+ArmPIDSource::ArmPIDSource(CANTalon* primary, CANTalon* secondary) : primary(primary), secondary(secondary) {}
 
 double ArmPIDSource::PIDGet() {
 	return primary->GetPosition() - secondary->GetPosition();

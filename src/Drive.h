@@ -18,7 +18,10 @@ class Drive {
 	const static int rearRightID = 33;
 
 	RobotDrive robotDrive;
-
+	CANTalon frontLeftMotor;
+	CANTalon rearLeftMotor;
+	CANTalon frontRightMotor;
+	CANTalon rearRightMotor;
 
 public:
 	Drive();

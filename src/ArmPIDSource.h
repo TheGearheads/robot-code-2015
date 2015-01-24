@@ -9,11 +9,12 @@
 #define SRC_ARMPIDSOURCE_H_
 #include "WPILib.h"
 
-class ArmPIDSource : PIDSource {
+
+class ArmPIDSource : public PIDSource {
 	CANTalon* primary;
 	CANTalon* secondary;
 public:
-	ArmPIDSource(CANTalon primary, CANTalon secondary);
+	ArmPIDSource(CANTalon* primary, CANTalon* secondary);
 	double PIDGet();
 };
 
