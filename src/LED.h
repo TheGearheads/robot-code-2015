@@ -8,11 +8,14 @@
 #ifndef SRC_LED_H_
 #define SRC_LED_H_
 
-	class LED : public PWM {
-		LED(uint32_t channel);
+#include "WPILib.h"
 
+class LED : public PWM {
+	public:
+	LED(uint32_t channel);
 	void Set(float value);
-	};
+
+};
 
 
 

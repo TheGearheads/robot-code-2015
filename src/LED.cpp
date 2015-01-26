@@ -9,7 +9,7 @@
 
 
 LED::LED(uint32_t channel) : PWM(channel) {
-	SetPeriodMutipier(kPeriodMutiplier_1X);
+	SetPeriodMultiplier(PWM::kPeriodMultiplier_1X);
 
 }
 
