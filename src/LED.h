@@ -12,7 +12,7 @@
 
 class LED : public PWM {
 	public:
-	LED(uint32_t channel);
+	explicit LED(uint32_t channel);
 	void Set(float value);
 
 };

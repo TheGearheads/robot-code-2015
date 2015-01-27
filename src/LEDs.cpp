@@ -7,7 +7,7 @@
 
 #include "LEDs.h"
 
-	LEDs::LEDs(uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : red(redChannel) , green(greenChannel) , blue(blueChannel) {	}
+LEDs::LEDs(uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : red(redChannel), green(greenChannel), blue(blueChannel) {}
 
 void LEDs::Set(float r, float g, float b) {
 	red.Set(r);
@@ -16,10 +16,10 @@ void LEDs::Set(float r, float g, float b) {
 }
 
 void LEDs::HSV(float h, float s, float v) {
-
+	h = fmod(h, 360);
 	float chroma = v * s;
-	float hPrime = h / 60;
-	float X = chroma * (1 - abs(hPrime % 2 - 1));
+	float hPrime = h / 60.0;
+	float X = chroma * (1.0 - fabs(fmod(hPrime, 2) - 1));
 
 	//R sub 1, G sub 1, and B sub1
 	float r1, g1, b1;

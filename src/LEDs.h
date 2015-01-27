@@ -20,6 +20,10 @@ public:
 	void Set(float r, float g, float b);
 	void HSV(float h, float s, float v);
 
+	DISALLOW_COPY_AND_ASSIGN(LEDs);
+
+
+
 };
 
 
