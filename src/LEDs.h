@@ -17,7 +17,8 @@ class LEDs {
 public:
 	LEDs(uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel);
 
-void Set(float r, float g, float b);
+	void Set(float r, float g, float b);
+	void HSV(float h, float s, float v);
 
 };
 
