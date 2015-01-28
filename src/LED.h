@@ -11,7 +11,9 @@
 #include "WPILib.h"
 
 class LED : public PWM {
+
 	public:
+
 	explicit LED(uint32_t channel);
 	void Set(float value);
 

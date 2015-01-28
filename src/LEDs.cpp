@@ -53,3 +53,36 @@ void LEDs::HSV(float h, float s, float v) {
 	float m = v - chroma;
 	Set(r1 + m, g1 + m, b1 + m);
 }
+
+/*
+ * should be called once in the periodic functions
+ *
+ * entirely untested
+ * -Jeff
+ */
+void LEDs::rainbow()
+{
+	//manipulate hueIncreasing
+	if (lastHue >= 359)
+	{
+		hueIncreasing=false;
+	}
+
+	if (lastHue <= 0)
+	{
+		hueIncreasing=true;
+	}
+
+	//set the hue
+	HSV(lastHue, 1, 1);
+
+	//increment lastHue
+	if(hueIncreasing)
+	{
+		lastHue++;
+	}
+	else
+	{
+		lastHue--;
+	}
+}
