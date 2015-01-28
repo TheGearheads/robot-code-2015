@@ -2,26 +2,52 @@
  * LEDs.cpp
  *
  *  Created on: Jan 24, 2015
- *      Author: Gabs, Jeff, Joe (the spelling errors guy)
+ *      Author: Gabs, Jeff, Joe
  */
 
 #include "LEDs.h"
 
+/**
+ * LEDs class to control RGB LEDs
+ *
+ * @param redChannel The PWM channel to give the Red signal
+ * @param greenChannel The PWM channel to give the Green signal
+ * @param blueChannel The PWM channel to give the Blue signal
+ *
+ * @todo This should also take the Relay channel that powers the LEDs
+ */
 LEDs::LEDs(uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : red(redChannel), green(greenChannel), blue(blueChannel) {}
 
+/**
+ * Set the color of the LEDs
+ *
+ * Takes an RGB triplet
+ * @param r Red [0, 1]
+ * @param g Green [0, 1]
+ * @param b Blue [0, 1]
+ */
 void LEDs::Set(float r, float g, float b) {
 	red.Set(r);
 	green.Set(g);
 	blue.Set(b);
 }
 
+/**
+ * Set the color of the LEDs
+ *
+ * <a href="rttps://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV">HSV to RGB conversion</a>
+ *
+ * Takes an HSV triplet
+ * @param h Hue [0, 360)
+ * @param s Saturation [0, 1]
+ * @param v Value [0, 1]
+ */
 void LEDs::HSV(float h, float s, float v) {
 	h = fmod(h, 360);
 	float chroma = v * s;
 	float hPrime = h / 60.0;
 	float X = chroma * (1.0 - fabs(fmod(hPrime, 2) - 1));
 
-	//R sub 1, G sub 1, and B sub1
 	float r1, g1, b1;
 
 	if (0 <= hPrime && hPrime < 1) {
@@ -59,30 +85,26 @@ void LEDs::HSV(float h, float s, float v) {
  *
  * entirely untested
  * -Jeff
+ *
+ * Don't push crazily incorrect styling.
+ * Also, is there a reason for it not to just wrap around to 0?
+ * - Josh
  */
-void LEDs::rainbow()
-{
-	//manipulate hueIncreasing
-	if (lastHue >= 359)
-	{
+void LEDs::Rainbow() {
+	// Manipulate hueIncreasing
+	if (lastHue >= 359) {
 		hueIncreasing=false;
-	}
-
-	if (lastHue <= 0)
-	{
+	} else if (lastHue <= 0) {
 		hueIncreasing=true;
 	}
 
-	//set the hue
+	// Set the hue
 	HSV(lastHue, 1, 1);
 
-	//increment lastHue
-	if(hueIncreasing)
-	{
+	// Increment lastHue
+	if(hueIncreasing) {
 		lastHue++;
-	}
-	else
-	{
+	} else {
 		lastHue--;
 	}
 }

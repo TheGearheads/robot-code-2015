@@ -14,6 +14,9 @@ class LED : public PWM {
 
 	public:
 
+	// Means there's no implicit conversion from uint32_t
+	// to our LED class. Shouldn't matter, but this forces things
+	// to be cleaner.
 	explicit LED(uint32_t channel);
 	void Set(float value);
 

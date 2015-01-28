@@ -21,7 +21,7 @@ public:
 		//comment out next line to set for Joystick
 		input.SetType(Input::kXbox);
 		lw = LiveWindow::GetInstance();
-		pref = Preferences::GetInstance();k
+		pref = Preferences::GetInstance();
 	}
 
 	void AutonomousInit()
@@ -50,4 +50,4 @@ public:
 	}
 };
 
-START_ROBOT_CLASS(Robot);
+START_ROBOT_CLASS(Robot)

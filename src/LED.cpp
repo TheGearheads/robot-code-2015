@@ -7,11 +7,18 @@
 
 #include "LED.h"
 
+/**
+ * LED class
+ * @param channel The PWM channel the LED is on
+ */
+LED::LED(uint32_t channel) : PWM(channel) { }
 
-LED::LED(uint32_t channel) : PWM(channel) {
-}
 
-//value must be between 0 and 1
+/**
+ * Set the LED's output
+ *
+ * @param value The value to set. [0, 1]
+ */
 void LED::Set(float value) {
 
 	// The smallest amount of time the PWM signal can be high is
@@ -20,7 +27,7 @@ void LED::Set(float value) {
 	// multiplier as value gets smaller. Unfortunately, this adds
 	// noticeable flicker, but is bearable unless you're really
 	// looking at it.
-
+	/// @todo Maybe only change the PeriodMultiplier if value is < 0.1
 	if (value < 0.25) {
 		SetPeriodMultiplier(PWM::kPeriodMultiplier_4X);
 		value *= 4;
