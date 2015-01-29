@@ -23,7 +23,7 @@ public:
 	void Set(float r, float g, float b);
 	void HSV(float h, float s, float v);
 
-	void rainbow();
+	void Rainbow();
 
 	// PWM based objects (such as the LED objects above) cannot be copied. Only one object
 	// can be associated with a PWM channel. This prevents copying.

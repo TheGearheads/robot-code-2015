@@ -91,20 +91,12 @@ void LEDs::HSV(float h, float s, float v) {
  * - Josh
  */
 void LEDs::Rainbow() {
-	// Manipulate hueIncreasing
-	if (lastHue >= 359) {
-		hueIncreasing=false;
-	} else if (lastHue <= 0) {
-		hueIncreasing=true;
-	}
-
-	// Set the hue
+	//Set the hue
 	HSV(lastHue, 1, 1);
 
-	// Increment lastHue
-	if(hueIncreasing) {
-		lastHue++;
-	} else {
-		lastHue--;
+	//Manipulate lastHue
+	lastHue++;
+	if(lastHue==360) {
+		lastHue=0;
 	}
 }
