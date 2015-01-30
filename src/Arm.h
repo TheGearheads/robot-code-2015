@@ -13,10 +13,13 @@
 #include "ArmPIDSource.h"
 
 class Arm {
-
-	const static int motorLeftID = 34;	//Motor a ID
-	const static int motorRightID = 35;	//Motor b ID
 	typedef enum { kLeft, kRight, kInvalid } Side;
+	typedef enum { kDown, kUp, kInvalidDir } Direction;
+
+	int motorLeftID;
+	int motorRightID;
+	float lastPosition;
+	Direction lastDirection = kInvalidDir;
 
 	CANTalon* motorLeft;
 	CANTalon* motorRight;
@@ -24,6 +27,7 @@ class Arm {
 
 public:
 	Arm();
+	void Arm::SetDirection(Arm::Direction newDirection);
 	void SetPosition(float position);
 	float GetPosition(Arm::Side side);
 };

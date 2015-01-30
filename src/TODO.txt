@@ -1,0 +1,13 @@
+Preferences 
+	PID values 
+	Piston channels 
+	Arm motor controller IDs 
+	Input profiles (joystick vs. xbox, buttons) 
+	Auton 
+Input mapping for arm/grabber (buttons/axes) 
+Odometry (position tracking with mouse/gyro) 
+Document everything 
+Custom dashboard 
+LEDs code to control spike 
+Finalize control board wiring (waiting for build)
+Controls booklet for competition  

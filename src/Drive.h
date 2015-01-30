@@ -17,11 +17,11 @@ class Drive {
 	int frontRightID;
 	int rearRightID;
 
-	RobotDrive robotDrive;
 	CANTalon* frontLeftMotor;
 	CANTalon* rearLeftMotor;
 	CANTalon* frontRightMotor;
 	CANTalon* rearRightMotor;
+	RobotDrive robotDrive;
 
 public:
 	Drive();

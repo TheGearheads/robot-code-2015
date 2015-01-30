@@ -10,9 +10,9 @@
 #include "WPILib.h"
 
 class Grabber {
-	const static int grabberOpenChannel = 0;
-	const static int grabberCloseChannel = 1;
-	DoubleSolenoid grabberSolenoid;
+	int grabberOpenChannel;
+	int grabberCloseChannel;
+	DoubleSolenoid* grabberSolenoid;
 
 public:
 	Grabber();

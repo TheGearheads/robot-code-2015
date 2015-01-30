@@ -10,13 +10,15 @@
 /**
  * LEDs class to control RGB LEDs
  *
+ * @param relayChannel The LEDs Relay channel
  * @param redChannel The PWM channel to give the Red signal
  * @param greenChannel The PWM channel to give the Green signal
  * @param blueChannel The PWM channel to give the Blue signal
- *
- * @todo This should also take the Relay channel that powers the LEDs
  */
-LEDs::LEDs(uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : red(redChannel), green(greenChannel), blue(blueChannel) {}
+LEDs::LEDs(uint32_t relayChannel, uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : power(relayChannel),
+red(redChannel), green(greenChannel), blue(blueChannel) {
+	power.Set(Relay::kOn);
+}
 
 /**
  * Set the color of the LEDs
