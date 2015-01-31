@@ -84,13 +84,8 @@ void LEDs::HSV(float h, float s, float v) {
 
 /*
  * should be called once in the periodic functions
- *
  * entirely untested
  * -Jeff
- *
- * Don't push crazily incorrect styling.
- * Also, is there a reason for it not to just wrap around to 0?
- * - Josh
  */
 void LEDs::Rainbow() {
 	//Set the hue
@@ -98,7 +93,8 @@ void LEDs::Rainbow() {
 
 	//Manipulate lastHue
 	lastHue++;
-	if(lastHue==360) {
-		lastHue=0;
+	if (lastHue == 360) {
+		lastHue = 0;
 	}
 }
+

@@ -32,6 +32,9 @@ public:
 	void AutonomousPeriodic()
 	{
 
+
+		//LED controls
+
 	}
 
 	void TeleopInit()
@@ -42,6 +45,9 @@ public:
 	void TeleopPeriodic()
 	{
 		drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
+
+		//LED controls
+
 	}
 
 	void TestPeriodic()

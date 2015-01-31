@@ -16,7 +16,6 @@ class LEDs {
 	Relay power;
 
 	int lastHue = 0; // Keeps track of the last hue value used in the rainbow function
-	bool hueIncreasing = true;
 
 public:
 	LEDs(uint32_t relayChannel, uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel);
@@ -24,6 +23,7 @@ public:
 	void Set(float r, float g, float b);
 	void HSV(float h, float s, float v);
 
+	//The LED "macro" functions
 	void Rainbow();
 
 	// PWM based objects (such as the LED objects above) cannot be copied. Only one object
