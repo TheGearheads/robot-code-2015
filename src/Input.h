@@ -13,18 +13,25 @@
 
 class Input {
 
+int axisX;
+int axisY;
+int axisRot;
+
+float deadbandX;
+float deadbandY;
+float deadbandRot;
+
+float speedMultiplier;
+int speedButton;
+
 public:
-	typedef enum {
-		kXbox, kJoystick
-	} JoystickType;
+
 
 	Joystick stick;
-	JoystickType type;
 	Input();
 	float GetX();
 	float GetY();
 	float GetRotation();
-	void SetType(JoystickType newType);
 
 };
 

@@ -21,16 +21,16 @@ Drive::Drive() {
 	rearRightMotor = new CANTalon(rearRightID);
 	robotDrive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 
-	robotDrive.SetExpiration(pref->GetFloat("drive.expiration", 0.1));
-	robotDrive.SetInvertedMotor(RobotDrive::kFrontLeftMotor, pref->GetBoolean("drive.frontLeft.inverted", false));
-	robotDrive.SetInvertedMotor(RobotDrive::kRearLeftMotor, pref->GetBoolean("drive.rearLeft.inverted", false));
-	robotDrive.SetInvertedMotor(RobotDrive::kFrontRightMotor, pref->GetBoolean("drive.frontRight.inverted", true));
-	robotDrive.SetInvertedMotor(RobotDrive::kRearRightMotor, pref->GetBoolean("drive.rearRight.inverted", true));
+	robotDrive->SetExpiration(pref->GetFloat("drive.expiration", 0.1));
+	robotDrive->SetInvertedMotor(RobotDrive::kFrontLeftMotor, pref->GetBoolean("drive.frontLeft.inverted", false));
+	robotDrive->SetInvertedMotor(RobotDrive::kRearLeftMotor, pref->GetBoolean("drive.rearLeft.inverted", false));
+	robotDrive->SetInvertedMotor(RobotDrive::kFrontRightMotor, pref->GetBoolean("drive.frontRight.inverted", true));
+	robotDrive->SetInvertedMotor(RobotDrive::kRearRightMotor, pref->GetBoolean("drive.rearRight.inverted", true));
 }
 
 	void Drive::doDrive(float x, float y, float z) {
 
-		robotDrive.MecanumDrive_Cartesian(x, y, z);
+		robotDrive->MecanumDrive_Cartesian(x, y, z);
 
 }
 

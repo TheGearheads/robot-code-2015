@@ -27,9 +27,9 @@ class Arm {
 
 public:
 	Arm();
-	void Arm::SetDirection(Arm::Direction newDirection);
+	void SetDirection(Direction newDirection);
 	void SetPosition(float position);
-	float GetPosition(Arm::Side side);
+	float GetPosition(Side side);
 };
 
 

@@ -21,7 +21,7 @@ class Drive {
 	CANTalon* rearLeftMotor;
 	CANTalon* frontRightMotor;
 	CANTalon* rearRightMotor;
-	RobotDrive robotDrive;
+	RobotDrive* robotDrive;
 
 public:
 	Drive();
