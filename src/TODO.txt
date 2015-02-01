@@ -3,8 +3,9 @@ x		PID values arm
 		PID values gyro 
 x		Piston channels 
 x		Arm motor controller IDs 
-		Input profiles (joystick vs. xbox, buttons) 
+x		Input profiles (joystick vs. xbox, buttons) 
 		Auton 
+		Arm levels
 	Input mapping for arm/grabber (buttons/axes) 
 	Odometry (position tracking with mouse/gyro) 
 x	LEDs code to control spike

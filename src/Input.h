@@ -8,8 +8,8 @@
 #ifndef ROBOT_CODE_2015_SRC_INPUT_H_
 #define ROBOT_CODE_2015_SRC_INPUT_H_
 
+#include <util/Util.h>
 #include "WPILib.h"
-#include "Util.h"
 
 class Input {
 
@@ -22,7 +22,7 @@ float deadbandY;
 float deadbandRot;
 
 float speedMultiplier;
-int speedButton;
+Util::Button speedButton;
 
 public:
 

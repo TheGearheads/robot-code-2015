@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <algorithm>
+#include "Button.h"
 
 // C++ templates are some witchcraft
 // https://en.wikipedia.org/wiki/Template_%28C%2B%2B%29#Function_templates

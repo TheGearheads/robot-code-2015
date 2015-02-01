@@ -3,13 +3,13 @@
 
 namespace Util {
 
-Button::Button(Mode mode /* = Button::kRaw */) : mode(mode) {}
+Button::Button(int buttonChannel, Joystick stick, Mode mode /* = Button::kRaw */) : buttonChannel(buttonChannel), stick(stick), mode(mode) {}
 
 /**
  * Update the value of the Button according to the mode
- * @param newValue The new value
  */
-void Button::Update(bool newValue) {
+void Button::Update() {
+	bool newValue = stick.GetRawButton(buttonChannel);
 	if (mode == Button::kRaw) {
 		value = newValue;
 	} else if (mode == Button::kPress) {
@@ -30,6 +30,7 @@ void Button::Update(bool newValue) {
 
 /**
  * Set Button's mode
+ * @param newMode The button mode to set
  */
 void Button::SetMode(Button::Mode newMode) {
 	mode = newMode;
@@ -45,6 +46,7 @@ bool Button::IsPressed() {
 
 /**
  * Get the value of the button and reset if needed
+ * @param reset Resets value and last value to false (Default: true)
  * @return Value of the Button
  */
 bool Button::Get(bool reset /* = true */) {

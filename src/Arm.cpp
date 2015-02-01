@@ -14,9 +14,19 @@ Arm::Arm() {
 	motorLeft = new CANTalon(motorLeftID);
 	motorRight = new CANTalon(motorRightID);
 	motorLeft->SetControlMode(CANTalon::kPosition);
-	motorRight->Set(motorLeftID);
-	controller = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
+	controllerRight = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
 	SetDirection(kUp);
+	int i = 0;
+	while (1) {
+		std::string key = "arm.level." + std::to_string(i);
+		if (!pref->ContainsKey(key.c_str())) {
+			break;
+		}
+		levels.push_back(pref->GetFloat(key.c_str()));
+		i++;
+	}
+	positionMax = i - 1;
+
 }
 
 
@@ -48,7 +58,7 @@ void Arm::SetDirection(Arm::Direction newDirection) {
 	rightD = pref->GetFloat(newDirection == kUp ? "arm.right.up.d" : "arm.right.down.d");
 
 	motorLeft->SetPID(leftP, leftI, leftD);
-	controller->SetPID(rightP, rightI, rightD);
+	controllerRight->SetPID(rightP, rightI, rightD);
 	lastDirection = newDirection;
 }
 
@@ -56,4 +66,14 @@ void Arm::SetPosition(float position) {
 	SetDirection(position > lastPosition ? kUp : kDown);
 	motorLeft->Set(position);
 	lastPosition = position;
+}
+
+void Arm::Up(int amount = 1) {
+	positionState = std::min(positionState + amount, positionMax);
+}
+void Arm::Down(int amount = 1) {
+	positionState = std::min(positionState + amount, 0);
+}
+void Arm::MoveToLevel(int level) {
+	SetPosition(levels[std::min(std::max(positionState, 0), positionMax)]);
 }
