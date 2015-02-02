@@ -8,7 +8,7 @@
 #ifndef ROBOT_CODE_2015_SRC_INPUT_H_
 #define ROBOT_CODE_2015_SRC_INPUT_H_
 
-#include <util/Util.h>
+#include "util/Util.h"
 #include "WPILib.h"
 
 class Input {
@@ -22,10 +22,9 @@ float deadbandY;
 float deadbandRot;
 
 float speedMultiplier;
-Util::Button speedButton;
+int speedButton;
 
 public:
-
 
 	Joystick stick;
 	Input();

@@ -10,10 +10,10 @@
 #include "LED.h"
 
 class LEDs {
+	Relay power;
 	LED red;
 	LED green;
 	LED blue;
-	Relay power;
 
 	int lastHue = 0; // Keeps track of the last hue value used in the rainbow function
 

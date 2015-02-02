@@ -8,7 +8,7 @@
 #include "Arm.h"
 
 Arm::Arm() {
-	auto pref = Preferences::GetInstance();
+	pref = Preferences::GetInstance();
 	motorLeftID = pref->GetInt("arm.left.ID");
 	motorRightID = pref->GetInt("arm.right.ID");
 	motorLeft = new CANTalon(motorLeftID);
@@ -16,22 +16,28 @@ Arm::Arm() {
 	motorLeft->SetControlMode(CANTalon::kPosition);
 	controllerRight = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
 	SetDirection(kUp);
+
 	int i = 0;
 	while (1) {
 		std::string key = "arm.level." + std::to_string(i);
 		if (!pref->ContainsKey(key.c_str())) {
 			break;
 		}
-		levels.push_back(pref->GetFloat(key.c_str()));
+		levels.push_back(HeightToPot(pref->GetFloat(key.c_str())));
 		i++;
 	}
-	positionMax = i - 1;
 
+	positionMax = i - 1;
 }
 
+Arm* Arm::GetInstance() {
+	if (instance == nullptr) {
+			instance = new Arm();
+	}
+	return instance;
+}
 
 float Arm::GetPosition(Arm::Side side) {
-	// return interpolate(position.GetValue(), potentiometerMin, potentiometerMax, 0.0, 1.0);
 	if (side == Arm::kLeft) {
 		return motorLeft->GetPosition();
 	} else if (side == Arm::kRight) {
@@ -47,8 +53,6 @@ void Arm::SetDirection(Arm::Direction newDirection) {
 
 	float leftP, leftI, leftD;
 	float rightP, rightI, rightD;
-
-	auto pref = Preferences::GetInstance();
 
 	leftP = pref->GetFloat(newDirection == kUp ? "arm.left.up.p" : "arm.left.down.p");
 	leftI = pref->GetFloat(newDirection == kUp ? "arm.left.up.i" : "arm.left.down.i");
@@ -68,12 +72,14 @@ void Arm::SetPosition(float position) {
 	lastPosition = position;
 }
 
-void Arm::Up(int amount = 1) {
+void Arm::Up(int amount /* = 1 */) {
 	positionState = std::min(positionState + amount, positionMax);
 }
-void Arm::Down(int amount = 1) {
-	positionState = std::min(positionState + amount, 0);
+void Arm::Down(int amount /* = 1 */) {
+	positionState = std::min(positionState - amount, 0);
 }
 void Arm::MoveToLevel(int level) {
 	SetPosition(levels[std::min(std::max(positionState, 0), positionMax)]);
 }
+
+Arm* Arm::instance = nullptr;
