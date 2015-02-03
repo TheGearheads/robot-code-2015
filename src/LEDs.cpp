@@ -90,7 +90,7 @@ void LEDs::HSV(float h, float s, float v) {
  * @param sat Saturation [0,1] 1 by default
  * @param val Value [0,1] 1 by default
  */
-void LEDs::Rainbow(float sat=1, float val=1) {
+void LEDs::Rainbow(float sat /*= 1*/, float val /*= 1*/) {
 	//Set the hue
 	HSV(lastHue, sat, val);
 
