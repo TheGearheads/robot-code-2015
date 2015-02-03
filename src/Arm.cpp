@@ -76,7 +76,7 @@ void Arm::Up(int amount /* = 1 */) {
 	positionState = std::min(positionState + amount, positionMax);
 }
 void Arm::Down(int amount /* = 1 */) {
-	positionState = std::min(positionState - amount, 0);
+	positionState = std::max(positionState - amount, 0);
 }
 void Arm::MoveToLevel(int level) {
 	SetPosition(levels[std::min(std::max(positionState, 0), positionMax)]);

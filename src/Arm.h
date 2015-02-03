@@ -20,7 +20,7 @@ public:
 	typedef enum { kLeft, kRight, kInvalid } Side;
 	typedef enum { kDown, kUp, kInvalidDir } Direction;
 
-	Arm* GetInstance();
+	static Arm* GetInstance();
 	void SetDirection(Direction newDirection);
 	void SetPosition(float position);
 	float GetPosition(Side side);

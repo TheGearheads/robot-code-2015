@@ -10,6 +10,8 @@
 
 #include "util/Util.h"
 #include "WPILib.h"
+#include "Arm.h"
+#include "Grabber.h"
 
 class Input {
 
@@ -22,7 +24,10 @@ float deadbandY;
 float deadbandRot;
 
 float speedMultiplier;
-int speedButton;
+Util::Button* speedButton;
+Util::Button* upButton;
+Util::Button* downButton;
+Util::Button* grabberButton;
 
 public:
 
@@ -31,6 +36,8 @@ public:
 	float GetX();
 	float GetY();
 	float GetRotation();
+	void GetArmInput();
+	void GetGrabberInput();
 
 };
 

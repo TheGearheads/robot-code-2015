@@ -13,9 +13,11 @@ class Grabber {
 	int grabberOpenChannel;
 	int grabberCloseChannel;
 	DoubleSolenoid* grabberSolenoid;
+	static Grabber* instance;
+	Grabber();
 
 public:
-	Grabber();
+	static Grabber* GetInstance();
 	void Open();
 	void Close();
 

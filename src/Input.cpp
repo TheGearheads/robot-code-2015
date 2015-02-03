@@ -17,18 +17,37 @@ Input::Input() : stick(0) {
 	deadbandY = pref->GetFloat(("input." + profile + ".axis.y.deadband").c_str());
 	deadbandRot = pref->GetFloat(("input." + profile + ".axis.rot.deadband").c_str());
 	speedMultiplier = pref->GetFloat("input.speedMultiplier");
-	speedButton = pref->GetInt(("input." + profile + ".speedButton").c_str());
+	speedButton = new Util::Button("input." + profile + ".speedButton");
+	upButton = new Util::Button("input." + profile + ".upButton");
+	downButton = new Util::Button("input." + profile + ".downButton");
+	grabberButton = new Util::Button("input." + profile + ".grabberButton");
 }
 
 float Input::GetX() {
-	return deadband(stick.GetRawAxis(axisX), deadbandX) * (stick.GetRawButton(speedButton) ? speedMultiplier : 1);
+	return deadband(stick.GetRawAxis(axisX), deadbandX) * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetY() {
-	return deadband(stick.GetRawAxis(axisY), deadbandY) * (stick.GetRawButton(speedButton) ? speedMultiplier : 1);
+	return deadband(stick.GetRawAxis(axisY), deadbandY) * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetRotation() {
-	return deadband(stick.GetRawAxis(axisRot), deadbandRot) * (stick.GetRawButton(speedButton) ? speedMultiplier : 1);
+	return deadband(stick.GetRawAxis(axisRot), deadbandRot) * (speedButton->Get() ? speedMultiplier : 1);
 }
 
+
+void Input::GetArmInput() {
+	if (upButton->Get()) {
+		Arm::GetInstance()->Up();
+	} else if (downButton->Get()) {
+		Arm::GetInstance()->Down();
+	}
+}
+
+void Input::GetGrabberInput() {
+	if (grabberButton->Get()) {
+		Grabber::GetInstance()->Open();
+	} else {
+		Grabber::GetInstance()->Close();
+	}
+}

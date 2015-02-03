@@ -1,16 +1,17 @@
 	Preferences 
 x		PID values arm
-		PID values gyro 
+-		PID values gyro 
 x		Piston channels 
 x		Arm motor controller IDs 
 x		Input profiles (joystick vs. xbox, buttons) 
 		Auton 
-		Arm levels
-	Input mapping for arm/grabber (buttons/axes) 
+x		Arm levels
+x	Input mapping for arm/grabber (buttons/axes) 
 	Odometry (position tracking with mouse/gyro) 
 x	LEDs code to control spike
 
 	Document everything 
 	Custom dashboard 
- 	Finalize control board wiring (waiting for build)
+- 	Finalize control board wiring (waiting for build)
 	Controls booklet for competition  
+-	wildstang cable magic 3d print 
