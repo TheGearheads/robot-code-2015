@@ -59,6 +59,19 @@ void Button::DelButton(Button* buttonPtr) {
 }
 
 /**
+ * Search for a Button by key
+ * @param key Configuration key to search by
+ */
+Button* Button::FindButton(std::string key) {
+	for (auto button : buttons) {
+		if (button->config == key) {
+			return button;
+		}
+	}
+	return nullptr;
+}
+
+/**
  * Simple constructor for a Button
  * @param buttonChannel The number for the button
  * @param mode The mode for the button (Default: kRaw)
@@ -92,6 +105,8 @@ Button::Button(int buttonChannel, Joystick* stick, Mode mode /* = Button::kRaw *
  */
 Button::Button(std::string buttonConfig) {
 	auto pref = Preferences::GetInstance();
+	config = buttonConfig;
+
 	if (!pref->ContainsKey(buttonConfig.c_str())) {
 		DriverStation::ReportError("Button] Attempting to load config '" + buttonConfig + "' and could not find it");
 		type = kInvalid;
@@ -123,11 +138,17 @@ Button::Button(std::string buttonConfig) {
 		} else if (typeStr == "axis") {
 			type = kAxis;
 			threshold = pref->GetFloat((buttonConfig + ".threshold").c_str(), 0.95);
+		} else if (typeStr == "virtual") {
+			type = kVirtual;
+			otherButton = Button::FindButton(pref->GetString(buttonConfig.c_str()));
 		} else {
 			DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and found an unknown type '" + typeStr + "'. Defaulting to 'raw'");
 			type = kButton;
 		}
 		printf("[Button] Loaded config '%s', stick '%d', type '%s', mode '%s', channel '%d'\n", buttonConfig.c_str(), stickNum, typeStr.c_str(), modeStr.c_str(), buttonChannel);
+
+		invert = pref->GetBoolean((buttonConfig + ".invert").c_str(), false);
+
 	}
 	Button::AddButton(this);
 }
@@ -159,6 +180,8 @@ void Button::Update() {
 		} else {
 			newValue = false;
 		}
+	} else if (type == kVirtual && otherButton != nullptr) {
+		newValue = otherButton->Get();
 	} else {
 		newValue = false;
 	}
@@ -210,7 +233,7 @@ bool Button::Get(bool reset /* = true */) {
 	}
   // If in Toggle or Raw mode, just return the value
 
-	return returnValue;
+	return returnValue ^ invert;
 }
 
 }

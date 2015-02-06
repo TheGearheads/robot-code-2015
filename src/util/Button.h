@@ -25,16 +25,19 @@ class Button {
 		bool Get(bool reset = true);
 	private:
 		enum ChannelType {
-			kButton, kPOV, kAxis, kInvalid
+			kButton, kPOV, kAxis, kVirtual, kInvalid
 		};
 		bool value = false;
 		bool lastValue = false;
+		bool invert = false;
 		ChannelType type = kButton;
 		float threshold;
 		int povIndex;
 		int buttonChannel;
 		Joystick* stick;
 		Mode mode = kRaw;
+		std::string config;
+		Button* otherButton = nullptr;
 
 		static std::vector<Button*> buttons;
 		static Task task;
@@ -44,6 +47,7 @@ class Button {
 		static void SetEnabled(bool enabled);
 		static void AddButton(Button* buttonPtr);
 		static void DelButton(Button* buttonPtr);
+		static Button* FindButton(std::string key);
 
 
 };
