@@ -8,6 +8,7 @@
 #ifndef SRC_ODOMETRY_H_
 #define SRC_ODOMETRY_H_
 
+#include <math.h>
 #include "WPILib.h"
 
 class Odometry {
@@ -21,8 +22,9 @@ public:
 	void Reset();
 
 private:
-	Util::Mouse* mouse;
-	Gyro* gyro;
+	Util::Mouse* mouseLeft;
+	Util::Mouse* mouseRight;
+	float sensorOffset;
 	float x;
 	float y;
 	float rot;

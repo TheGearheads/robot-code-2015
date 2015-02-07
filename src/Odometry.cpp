@@ -19,8 +19,9 @@ void Odometry::OdometryTask() {
 
 Odometry::Odometry() {
 	auto pref = Prefernces::GetInstance();
-	mouse = new Mouse(pref->GetString("odometry.device"));
-	gyro = new Gyro(pref->GetInt("odometry.gyroChannel"));
+	mouseLeft = new Mouse(pref->GetString("odometry.left"), pref->GetInt("odometry.left.dpi", 1));
+	mouseRight = new Mouse(pref->GetString("odometry.right"), pref->GetInt("odometry.right.dpi", 1));
+	sensorOffset = pref->GetFloat("odometry.separation") / 2;
 }
 
 Odometry* Odometry::GetInstance() {
@@ -31,15 +32,37 @@ Odometry* Odometry::GetInstance() {
 }
 
 void Odometry::Update() {
-	mouse->Poll();
-	rot = gyro->GetAngle();
+	mouseLeft->Poll();
+	mouseRight->Poll();
+
+float dlx = mouseLeft->GetX();
+float dly =-mouseLeft->GetY();
+float drx = mouseRight->GetX();
+float dry = -mouseRight->GetY();
+
+float lx = x - sensorOffset * cos(rot);
+float ly = y - sensorOffset * sin(rot);
+float rx = x + sensorOffest * cos(rot);
+float ry = y + sensorOffest * sin(rot);
+
+lx += dlx * cos(rot) + dly * sin(rot);
+ly += dlx * sin(rot) - dly * cos(rot);
+rx += drx * cos(rot) + dry * sin(rot);
+ry += drx * sin(rot) - dry * cos(rot);
+
+x = (lx + rx) /2;
+y = (ly + ry) /2;
+rot = atan2(ry - ly, rx - lx); // is this correct?
+
+mouseLeft->Reset();
+mouseRight->Reset();
+
 }
 
 void Odometry::Reset() {
 	x = 0;
 	y = 0;
 	rot = 0;
-	gyro->Reset();
 }
 
 float Odometry::GetX() {
