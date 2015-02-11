@@ -9,7 +9,6 @@ private:
 	Drive drive;
 	Joystick stick;
 	Input input;
-	Preferences* pref;
 
 public:
 	Robot() : IterativeRobot(), stick(0){
@@ -19,9 +18,7 @@ public:
 	void RobotInit()
 	{
 		//comment out next line to set for Joystick
-		input.SetType(Input::kXbox);
 		lw = LiveWindow::GetInstance();
-		pref = Preferences::GetInstance();
 	}
 
 	void AutonomousInit()

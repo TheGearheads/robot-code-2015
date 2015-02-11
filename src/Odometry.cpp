@@ -17,10 +17,10 @@ void Odometry::OdometryTask() {
 
 }
 
-Odometry::Odometry() {
-	auto pref = Prefernces::GetInstance();
-	mouseLeft = new Mouse(pref->GetString("odometry.left"), pref->GetInt("odometry.left.dpi", 1));
-	mouseRight = new Mouse(pref->GetString("odometry.right"), pref->GetInt("odometry.right.dpi", 1));
+Odometry::Odometry() : x(0), y(0), rot(0) {
+	auto pref = Preferences::GetInstance();
+	mouseLeft = new Util::Mouse(pref->GetString("odometry.left"), pref->GetInt("odometry.left.dpi", 1));
+	mouseRight = new Util::Mouse(pref->GetString("odometry.right"), pref->GetInt("odometry.right.dpi", 1));
 	sensorOffset = pref->GetFloat("odometry.separation") / 2;
 }
 
@@ -42,8 +42,8 @@ float dry = -mouseRight->GetY();
 
 float lx = x - sensorOffset * cos(rot);
 float ly = y - sensorOffset * sin(rot);
-float rx = x + sensorOffest * cos(rot);
-float ry = y + sensorOffest * sin(rot);
+float rx = x + sensorOffset * cos(rot);
+float ry = y + sensorOffset * sin(rot);
 
 lx += dlx * cos(rot) + dly * sin(rot);
 ly += dlx * sin(rot) - dly * cos(rot);

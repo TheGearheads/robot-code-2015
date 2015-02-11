@@ -1,6 +1,6 @@
 	Preferences 
 x		PID values arm
--		PID values gyro 
+-		Mouse code
 x		Piston channels 
 x		Arm motor controller IDs 
 x		Input profiles (joystick vs. xbox, buttons) 
@@ -14,4 +14,4 @@ x	LEDs code to control spike
 	Custom dashboard 
 - 	Finalize control board wiring (waiting for build)
 	Controls booklet for competition  
--	wildstang cable magic 3d print 
+x	wildstang cable magic 3d print 

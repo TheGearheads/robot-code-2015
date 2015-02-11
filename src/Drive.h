@@ -12,21 +12,18 @@
 
 class Drive {
 
-	int frontLeftID;
-	int rearLeftID;
-	int frontRightID;
-	int rearRightID;
-
-	CANTalon* frontLeftMotor;
-	CANTalon* rearLeftMotor;
-	CANTalon* frontRightMotor;
-	CANTalon* rearRightMotor;
+	SpeedController* frontLeftMotor;
+	SpeedController* rearLeftMotor;
+	SpeedController* frontRightMotor;
+	SpeedController* rearRightMotor;
 	RobotDrive* robotDrive;
 
 public:
 	Drive();
 	void doDrive(float x, float y, float z);
-
+	static SpeedController* InitMotor(std::string key);
+	static Drive* GetInstance();
+	static Drive* instance;
 };
 
 

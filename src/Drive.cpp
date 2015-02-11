@@ -8,17 +8,32 @@
 
 #include "Drive.h"
 
+SpeedController* Drive::InitMotor(std::string key) {
+	auto pref = Preferences::GetInstance();
+	std::string type = pref->GetString((key + ".type").c_str());
+	int id = pref->GetInt(key.c_str());
+	if (type == "PWM") {
+		DriverStation::ReportError("New PWM Talon: " + key);
+		return new Talon(id);
+	} else {
+		return new CANTalon(id);
+	}
+}
+
+Drive* Drive::GetInstance() {
+	if (instance == nullptr) {
+			instance = new Arm();
+	}
+	return instance;
+}
+
 Drive::Drive() {
 	auto pref = Preferences::GetInstance();
-	frontLeftID = pref->GetInt("drive.frontLeft.ID");
-	rearLeftID = pref->GetInt("drive.rearLeft.ID");
-	frontRightID = pref->GetInt("drive.frontRight.ID");
-	rearRightID = pref->GetInt("drive.rearRight.ID");
 
-	frontLeftMotor = new CANTalon(frontLeftID);
-	rearLeftMotor = new CANTalon(rearLeftID);
-	frontRightMotor = new CANTalon(frontRightID);
-	rearRightMotor = new CANTalon(rearRightID);
+	frontLeftMotor = InitMotor("drive.frontLeft");
+	rearLeftMotor = InitMotor("drive.rearLeft");
+	frontRightMotor = InitMotor("drive.frontRight");
+	rearRightMotor = InitMotor("drive.rearRight");
 	robotDrive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 
 	robotDrive->SetExpiration(pref->GetFloat("drive.expiration", 0.1));

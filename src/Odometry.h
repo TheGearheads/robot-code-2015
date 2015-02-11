@@ -10,6 +10,7 @@
 
 #include <math.h>
 #include "WPILib.h"
+#include "util/Mouse.h"
 
 class Odometry {
 public:
@@ -28,12 +29,13 @@ private:
 	float x;
 	float y;
 	float rot;
+	Odometry();
 
 	static Odometry* instance;
 	static Task task;
 
 	static void OdometryTask();
-}
+};
 
 
 
