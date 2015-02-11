@@ -17,13 +17,13 @@ class Drive {
 	SpeedController* frontRightMotor;
 	SpeedController* rearRightMotor;
 	RobotDrive* robotDrive;
+	static Drive* instance;
 
 public:
 	Drive();
 	void doDrive(float x, float y, float z);
 	static SpeedController* InitMotor(std::string key);
 	static Drive* GetInstance();
-	static Drive* instance;
 };
 
 
