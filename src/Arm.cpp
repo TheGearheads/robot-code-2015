@@ -7,15 +7,18 @@
 
 #include "Arm.h"
 
+Arm* Arm::instance = nullptr;
+
 Arm::Arm() {
 	pref = Preferences::GetInstance();
-	motorLeftID = pref->GetInt("arm.left.ID");
-	motorRightID = pref->GetInt("arm.right.ID");
+	motorLeftID = pref->GetInt("arm.left");
+	motorRightID = pref->GetInt("arm.right");
 	motorLeft = new CANTalon(motorLeftID);
 	motorRight = new CANTalon(motorRightID);
-	motorLeft->SetControlMode(CANTalon::kPosition);
 	controllerRight = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
 	SetDirection(kUp);
+	SetMode(kPID);
+
 
 	int i = 0;
 	while (1) {
@@ -82,4 +85,21 @@ void Arm::MoveToLevel(int level) {
 	SetPosition(levels[std::min(std::max(positionState, 0), positionMax)]);
 }
 
-Arm* Arm::instance = nullptr;
+
+void Arm::DirectDrive(float input) {
+	motorLeft->Set(input);
+	motorRight->Set(input);
+	SmartDashboard::PutNumber("leftArmPosition", GetPosition(kLeft));
+	SmartDashboard::PutNumber("rightArmPosition", GetPosition(kRight));
+}
+
+void Arm::SetMode(Arm::Mode newMode) {
+	if (newMode == kDirect) {
+		motorLeft->SetControlMode(CANTalon::kPercentVbus);
+		controllerRight->Disable();
+	} else {
+		motorLeft->SetControlMode(CANTalon::kPosition);
+		controllerRight->Enable();
+	}
+}
+

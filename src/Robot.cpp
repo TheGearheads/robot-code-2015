@@ -19,6 +19,7 @@ public:
 	{
 		//comment out next line to set for Joystick
 		lw = LiveWindow::GetInstance();
+		Arm::GetInstance()->SetMode(Arm::kDirect);
 	}
 
 	void AutonomousInit()
@@ -41,8 +42,8 @@ public:
 
 	void TeleopPeriodic()
 	{
-		drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
-
+		//drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
+		Arm::GetInstance()->DirectDrive(input.GetY());
 		//LED controls
 
 	}

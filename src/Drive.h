@@ -8,6 +8,7 @@
 #ifndef ROBOT_CODE_2015_SRC_DRIVE_H_
 #define ROBOT_CODE_2015_SRC_DRIVE_H_
 
+#include <string>
 #include "WPILib.h"
 
 class Drive {

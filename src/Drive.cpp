@@ -10,7 +10,7 @@
 
 SpeedController* Drive::InitMotor(std::string key) {
 	auto pref = Preferences::GetInstance();
-	std::string type = pref->GetString((key + ".type"), "CAN");
+	std::string type = pref->GetString((key + ".type").c_str(), "CAN");
 	int id = pref->GetInt(key.c_str());
 	if (type == "PWM") {
 		DriverStation::ReportError("New PWM Talon: " + key);

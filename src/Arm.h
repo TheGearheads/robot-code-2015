@@ -17,8 +17,9 @@
 
 class Arm {
 public:
-	typedef enum { kLeft, kRight, kInvalid } Side;
-	typedef enum { kDown, kUp, kInvalidDir } Direction;
+	enum Side { kLeft, kRight, kInvalid };
+	enum Direction { kDown, kUp, kInvalidDir };
+	enum Mode { kDirect, kPID };
 
 	static Arm* GetInstance();
 	void SetDirection(Direction newDirection);
@@ -27,6 +28,8 @@ public:
 	void Up(int amount = 1);
 	void Down(int amount = 1);
 	void MoveToLevel(int level);
+	void DirectDrive(float input);
+	void SetMode(Mode newMode);
 
 private:
 	static Arm* instance;
