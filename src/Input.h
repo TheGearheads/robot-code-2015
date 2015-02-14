@@ -15,13 +15,10 @@
 
 class Input {
 
-int axisX;
-int axisY;
-int axisRot;
+Util::Axis* axisX;
+Util::Axis* axisY;
+Util::Axis* axisRot;
 
-float deadbandX;
-float deadbandY;
-float deadbandRot;
 
 float speedMultiplier;
 Util::Button* speedButton;

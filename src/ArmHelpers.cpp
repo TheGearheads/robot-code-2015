@@ -15,7 +15,7 @@ int AngleToPot(float angle) {
 	float maxAngle = pref->GetFloat("arm.angle.max");
 	int minPot = pref->GetFloat("arm.pot.min");
 	int maxPot = pref->GetFloat("arm.pot.min");
-	return interpolate(angle, minAngle, maxAngle, minPot, maxPot);
+	return Interpolate(angle, minAngle, maxAngle, minPot, maxPot);
 }
 
 float AngleToHeight(float angle) {
@@ -29,7 +29,7 @@ float PotToAngle(int pot) {
 	float maxAngle = pref->GetFloat("arm.angle.max");
 	int minPot = pref->GetFloat("arm.pot.min");
 	int maxPot = pref->GetFloat("arm.pot.min");
-	return interpolate(pot, minPot, maxPot, minAngle, maxAngle);
+	return Interpolate(pot, minPot, maxPot, minAngle, maxAngle);
 }
 
 float PotToHeight(int pot) {

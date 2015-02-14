@@ -10,12 +10,9 @@
 Input::Input() : stick(0) {
 	auto pref = Preferences::GetInstance();
 	std::string profile = pref->GetString("input.profile");
-	axisX = pref->GetInt(("input." + profile + ".axis.x").c_str());
-	axisY = pref->GetInt(("input." + profile + ".axis.y").c_str());
-	axisRot = pref->GetInt(("input." + profile + ".axis.rot").c_str());
-	deadbandX = pref->GetFloat(("input." + profile + ".axis.x.deadband").c_str());
-	deadbandY = pref->GetFloat(("input." + profile + ".axis.y.deadband").c_str());
-	deadbandRot = pref->GetFloat(("input." + profile + ".axis.rot.deadband").c_str());
+	axisX = new Util::Axis("input." + profile + ".axis.x");
+	axisY = new Util::Axis("input." + profile + ".axis.y");
+	axisRot = new Util::Axis("input." + profile + ".axis.rot");
 	speedMultiplier = pref->GetFloat("input.speedMultiplier");
 	speedButton = new Util::Button("input." + profile + ".speedButton");
 	upButton = new Util::Button("input." + profile + ".upButton");
@@ -24,15 +21,15 @@ Input::Input() : stick(0) {
 }
 
 float Input::GetX() {
-	return deadband(stick.GetRawAxis(axisX), deadbandX) * (speedButton->Get() ? speedMultiplier : 1);
+	return axisX->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetY() {
-	return deadband(stick.GetRawAxis(axisY), deadbandY) * (speedButton->Get() ? speedMultiplier : 1);
+	return axisY->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetRotation() {
-	return deadband(stick.GetRawAxis(axisRot), deadbandRot) * (speedButton->Get() ? speedMultiplier : 1);
+	return axisRot->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 

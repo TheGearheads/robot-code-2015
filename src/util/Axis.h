@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "WPILib.h"
+#include "Util.h"
 
 namespace Util {
 
@@ -25,17 +26,6 @@ class Axis {
 		float deadband;
 		Joystick* stick;
 		std::string config;
-
-		static std::vector<Axis*> axes;
-		static Task task;
-		static bool taskRunning;
-
-		static void AxisChecker();
-		static void SetEnabled(bool enabled);
-		static void AddAxis(Axis* axisPtr);
-		static void DelAxis(Axis* axisPtr);
-		static Axis* FindAxis(std::string key);
-
 
 };
 
