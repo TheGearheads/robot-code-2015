@@ -13,6 +13,7 @@ class Grabber {
 	int grabberOpenChannel;
 	int grabberCloseChannel;
 	DoubleSolenoid* grabberSolenoid;
+	Compressor* compressor;
 	static Grabber* instance;
 	Grabber();
 

@@ -19,7 +19,7 @@ public:
 	{
 		//comment out next line to set for Joystick
 		lw = LiveWindow::GetInstance();
-		Arm::GetInstance()->SetMode(Arm::kDirect);
+		//Arm::GetInstance()->SetMode(Arm::kDirect);
 	}
 
 	void AutonomousInit()
@@ -37,13 +37,15 @@ public:
 
 	void TeleopInit()
 	{
+		SmartDashboard::PutBoolean("Following", false);
 
 	}
 
 	void TeleopPeriodic()
 	{
-		//drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
-		Arm::GetInstance()->DirectDrive(input.GetY());
+		drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
+		input.GetGrabberInput();
+		input.GetArmInput();
 		//LED controls
 
 	}

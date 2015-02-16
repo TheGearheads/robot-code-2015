@@ -13,6 +13,7 @@ Input::Input() : stick(0) {
 	axisX = new Util::Axis("input." + profile + ".axis.x");
 	axisY = new Util::Axis("input." + profile + ".axis.y");
 	axisRot = new Util::Axis("input." + profile + ".axis.rot");
+	axisArm = new Util::Axis("input." + profile + ".axis.arm");
 	speedMultiplier = pref->GetFloat("input.speedMultiplier");
 	speedButton = new Util::Button("input." + profile + ".speedButton");
 	upButton = new Util::Button("input." + profile + ".upButton");
@@ -21,24 +22,28 @@ Input::Input() : stick(0) {
 }
 
 float Input::GetX() {
+	SmartDashboard::PutNumber("X", axisX->Get());
 	return axisX->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetY() {
+	SmartDashboard::PutNumber("Y", axisY->Get());
 	return axisY->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 float Input::GetRotation() {
+	SmartDashboard::PutNumber("Rot", axisRot->Get());
 	return axisRot->Get() * (speedButton->Get() ? speedMultiplier : 1);
 }
 
 
 void Input::GetArmInput() {
-	if (upButton->Get()) {
+	Arm::GetInstance()->DirectDrive(axisArm->Get());
+	/*if (upButton->Get()) {
 		Arm::GetInstance()->Up();
 	} else if (downButton->Get()) {
 		Arm::GetInstance()->Down();
-	}
+	} */
 }
 
 void Input::GetGrabberInput() {

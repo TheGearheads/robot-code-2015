@@ -18,6 +18,7 @@ class Input {
 Util::Axis* axisX;
 Util::Axis* axisY;
 Util::Axis* axisRot;
+Util::Axis* axisArm;
 
 
 float speedMultiplier;

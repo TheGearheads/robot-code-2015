@@ -15,10 +15,13 @@ Arm::Arm() {
 	motorRightID = pref->GetInt("arm.right");
 	motorLeft = new CANTalon(motorLeftID);
 	motorRight = new CANTalon(motorRightID);
-	controllerRight = new PIDController(0, 0, 0, new ArmPIDSource(motorLeft, motorRight), motorRight);
+	motorLeft->SetFeedbackDevice(CANTalon::AnalogPot);
+	motorRight->SetFeedbackDevice(CANTalon::AnalogPot);
+	controllerRight = new PIDController(0, 0, 0, this, motorRight);
 	SetDirection(kUp);
-	SetMode(kPID);
-
+	//SetMode(kPID);
+	SetMode(kDirect);
+	controllerRight->Enable();
 
 	int i = 0;
 	while (1) {
@@ -42,9 +45,11 @@ Arm* Arm::GetInstance() {
 
 float Arm::GetPosition(Arm::Side side) {
 	if (side == Arm::kLeft) {
-		return motorLeft->GetPosition();
+		return 1023 - motorLeft->GetPosition();
+		//return 1023 - motorLeft->GetAnalogInRaw();
 	} else if (side == Arm::kRight) {
-		return motorRight->GetPosition();
+		return 1023 - motorRight->GetPosition() + pref->GetInt("arm.right.offset");
+		//return 1023 - motorRight->GetAnalogInRaw() + pref->GetInt("arm.right.offset");
 	}
 	return 0;
 }
@@ -64,14 +69,16 @@ void Arm::SetDirection(Arm::Direction newDirection) {
 	rightI = pref->GetFloat(newDirection == kUp ? "arm.right.up.i" : "arm.right.down.i");
 	rightD = pref->GetFloat(newDirection == kUp ? "arm.right.up.d" : "arm.right.down.d");
 
-	motorLeft->SetPID(leftP, leftI, leftD);
+	//motorLeft->SetPID(leftP, leftI, leftD);
 	controllerRight->SetPID(rightP, rightI, rightD);
+//	controllerRight->SetTolerance(pref->GetFloat("arm.tolerance"));
+	SmartDashboard::PutNumber("Tolerance", pref->GetFloat("arm.tolerance"));
 	lastDirection = newDirection;
 }
 
 void Arm::SetPosition(float position) {
 	SetDirection(position > lastPosition ? kUp : kDown);
-	motorLeft->Set(position);
+	//motorLeft->Set(position);
 	lastPosition = position;
 }
 
@@ -88,7 +95,8 @@ void Arm::MoveToLevel(int level) {
 
 void Arm::DirectDrive(float input) {
 	motorLeft->Set(input);
-	motorRight->Set(input);
+	//motorRight->Set(input);
+	SetDirection(input > 0 ? kUp : kDown);
 	SmartDashboard::PutNumber("leftArmPosition", GetPosition(kLeft));
 	SmartDashboard::PutNumber("rightArmPosition", GetPosition(kRight));
 }
@@ -103,3 +111,13 @@ void Arm::SetMode(Arm::Mode newMode) {
 	}
 }
 
+double Arm::PIDGet() {
+	SmartDashboard::PutBoolean("Following", true);
+	auto pref = Preferences::GetInstance();
+	SmartDashboard::PutBoolean("Followed", abs(Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband"))) < 0.1);
+	SmartDashboard::PutNumber("RawDifference", GetPosition(kLeft) - GetPosition(kRight));
+	SmartDashboard::PutNumber("Difference", Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband")));
+	SmartDashboard::PutNumber("Deadband", pref->GetFloat("arm.deadband"));
+	return -Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband"));
+//	return GetPosition(kRight) - GetPosition(kLeft);
+}

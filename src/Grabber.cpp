@@ -10,7 +10,9 @@ Grabber::Grabber() {
 	auto pref = Preferences::GetInstance();
 	grabberCloseChannel = pref->GetInt("grabber.closeChannel");
 	grabberOpenChannel = pref->GetInt("grabber.openChannel");
-	grabberSolenoid = new DoubleSolenoid(grabberOpenChannel, grabberCloseChannel);
+	grabberSolenoid = new DoubleSolenoid(pref->GetInt("grabber.pcm", 5), grabberOpenChannel, grabberCloseChannel);
+	compressor = new Compressor(pref->GetInt("grabber.pcm", 5));
+	compressor->SetClosedLoopControl(true);
 }
 
 Grabber* Grabber::GetInstance() {
@@ -21,10 +23,12 @@ Grabber* Grabber::GetInstance() {
 }
 
 void Grabber::Open() {
+	SmartDashboard::PutBoolean("grabber", true);
 	grabberSolenoid->Set(DoubleSolenoid::kForward);
 }
 
 void Grabber::Close() {
+	SmartDashboard::PutBoolean("grabber", false);
 	grabberSolenoid->Set(DoubleSolenoid::kReverse);
 }
 

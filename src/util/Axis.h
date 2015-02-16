@@ -19,7 +19,7 @@ class Axis {
 		~Axis();
 		void SetDeadband(float newDeadband);
 		float GetDeadband();
-		bool Get();
+		float Get();
 	private:
 		int axisChannel;
 		bool invert = false;

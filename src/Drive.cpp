@@ -35,7 +35,7 @@ Drive::Drive() {
 	rearRightMotor = InitMotor("drive.rearRight");
 	robotDrive = new RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
 
-	robotDrive->SetExpiration(pref->GetFloat("drive.expiration", 0.1));
+//	robotDrive->SetExpiration(pref->GetFloat("drive.expiration", 0.1));
 	robotDrive->SetInvertedMotor(RobotDrive::kFrontLeftMotor, pref->GetBoolean("drive.frontLeft.inverted", false));
 	robotDrive->SetInvertedMotor(RobotDrive::kRearLeftMotor, pref->GetBoolean("drive.rearLeft.inverted", false));
 	robotDrive->SetInvertedMotor(RobotDrive::kFrontRightMotor, pref->GetBoolean("drive.frontRight.inverted", true));

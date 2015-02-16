@@ -62,7 +62,7 @@ float Axis::GetDeadband() {
  * Get the value of the axis, applying invert and deadband
  * @return Value of the Axis
  */
-bool Axis::Get() {
+float Axis::Get() {
 	return (invert ? -1 : 1) * Deadband(stick->GetRawAxis(axisChannel), deadband);
 }
 

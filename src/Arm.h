@@ -12,10 +12,9 @@
 #include <string>
 #include "util/Util.h"
 #include "WPILib.h"
-#include "ArmPIDSource.h"
 #include "ArmHelpers.h"
 
-class Arm {
+class Arm : public PIDSource {
 public:
 	enum Side { kLeft, kRight, kInvalid };
 	enum Direction { kDown, kUp, kInvalidDir };
@@ -30,6 +29,7 @@ public:
 	void MoveToLevel(int level);
 	void DirectDrive(float input);
 	void SetMode(Mode newMode);
+	double PIDGet();
 
 private:
 	static Arm* instance;
