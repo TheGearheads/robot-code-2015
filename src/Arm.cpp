@@ -17,11 +17,11 @@ Arm::Arm() {
 	motorRight = new CANTalon(motorRightID);
 	motorLeft->SetFeedbackDevice(CANTalon::AnalogPot);
 	motorRight->SetFeedbackDevice(CANTalon::AnalogPot);
-	controllerRight = new PIDController(0, 0, 0, this, motorRight);
+	//controllerRight = new PIDController(0, 0, 0, this, motorRight);
 	SetDirection(kUp);
 	//SetMode(kPID);
 	SetMode(kDirect);
-	controllerRight->Enable();
+	//controllerRight->Enable();
 
 	int i = 0;
 	while (1) {
@@ -55,25 +55,21 @@ float Arm::GetPosition(Arm::Side side) {
 }
 
 void Arm::SetDirection(Arm::Direction newDirection) {
-	if (newDirection == lastDirection) {
+	if (newDirection == direction) {
 		return;
 	}
+	SmartDashboard::PutString("ArmDirection", newDirection == kUp ? "Up" : "Down");
 
-	float leftP, leftI, leftD;
-	float rightP, rightI, rightD;
+	//float p, i, d;
 
-	leftP = pref->GetFloat(newDirection == kUp ? "arm.left.up.p" : "arm.left.down.p");
-	leftI = pref->GetFloat(newDirection == kUp ? "arm.left.up.i" : "arm.left.down.i");
-	leftD = pref->GetFloat(newDirection == kUp ? "arm.left.up.d" : "arm.left.down.d");
-	rightP = pref->GetFloat(newDirection == kUp ? "arm.right.up.p" : "arm.right.down.p");
-	rightI = pref->GetFloat(newDirection == kUp ? "arm.right.up.i" : "arm.right.down.i");
-	rightD = pref->GetFloat(newDirection == kUp ? "arm.right.up.d" : "arm.right.down.d");
+	//p = pref->GetFloat(newDirection == kUp ? "arm.up.p" : "arm.down.p");
+	//i = pref->GetFloat(newDirection == kUp ? "arm.up.i" : "arm.down.i");
+	//d = pref->GetFloat(newDirection == kUp ? "arm.up.d" : "arm.down.d");
 
 	//motorLeft->SetPID(leftP, leftI, leftD);
-	controllerRight->SetPID(rightP, rightI, rightD);
+	//controllerRight->SetPID(rightP, rightI, rightD);
 //	controllerRight->SetTolerance(pref->GetFloat("arm.tolerance"));
-	SmartDashboard::PutNumber("Tolerance", pref->GetFloat("arm.tolerance"));
-	lastDirection = newDirection;
+	direction = newDirection;
 }
 
 void Arm::SetPosition(float position) {
@@ -94,17 +90,44 @@ void Arm::MoveToLevel(int level) {
 
 
 void Arm::DirectDrive(float input) {
-	motorLeft->Set(input);
-	//motorRight->Set(input);
+	float leftInput = input;
+	float rightInput = input;
+
 	SetDirection(input > 0 ? kUp : kDown);
-	SmartDashboard::PutNumber("leftArmPosition", GetPosition(kLeft));
-	SmartDashboard::PutNumber("rightArmPosition", GetPosition(kRight));
+
+	float leftPos = GetPosition(kLeft);
+	float rightPos = GetPosition(kRight);
+	float diff = abs(rightPos - leftPos);
+	float tolerance = pref->GetFloat("arm.tolerance");
+
+	SmartDashboard::PutNumber("leftArmPosition", leftPos);
+	SmartDashboard::PutNumber("rightArmPosition", rightPos);
+	SmartDashboard::PutNumber("Tolerance", tolerance);
+	SmartDashboard::PutNumber("Difference", diff);
+
+	if (diff > tolerance) {
+		if (direction == kUp) {
+			if (rightPos > leftPos) {
+				rightInput = 0;
+			} else {
+				leftInput = 0;
+			}
+		} else if (direction == kDown) {
+			if (rightPos < leftPos) {
+				rightInput = 0;
+			} else {
+				leftInput = 0;
+			}
+		}
+	}
+	motorLeft->Set(leftInput);
+	motorRight->Set(rightInput);
 }
 
 void Arm::SetMode(Arm::Mode newMode) {
 	if (newMode == kDirect) {
 		motorLeft->SetControlMode(CANTalon::kPercentVbus);
-		controllerRight->Disable();
+		//controllerRight->Disable();
 	} else {
 		motorLeft->SetControlMode(CANTalon::kPosition);
 		controllerRight->Enable();
@@ -116,7 +139,6 @@ double Arm::PIDGet() {
 	auto pref = Preferences::GetInstance();
 	SmartDashboard::PutBoolean("Followed", abs(Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband"))) < 0.1);
 	SmartDashboard::PutNumber("RawDifference", GetPosition(kLeft) - GetPosition(kRight));
-	SmartDashboard::PutNumber("Difference", Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband")));
 	SmartDashboard::PutNumber("Deadband", pref->GetFloat("arm.deadband"));
 	return -Deadband(GetPosition(kLeft) - GetPosition(kRight), pref->GetFloat("arm.deadband"));
 //	return GetPosition(kRight) - GetPosition(kLeft);

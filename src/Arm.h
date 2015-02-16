@@ -39,7 +39,7 @@ private:
 	int motorLeftID;
 	int motorRightID;
 	float lastPosition;
-	Direction lastDirection = kInvalidDir;
+	Direction direction = kInvalidDir;
 	std::vector<float> levels;
 
 	CANTalon* motorLeft;
