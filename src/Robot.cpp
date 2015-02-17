@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "Drive.h"
 #include "Input.h"
+#include "Auton.h"
 
 class Robot: public IterativeRobot
 {
@@ -9,6 +10,7 @@ private:
 	Drive drive;
 	Joystick stick;
 	Input input;
+	Auton auton;
 
 public:
 	Robot() : IterativeRobot(), stick(0){
@@ -24,13 +26,13 @@ public:
 
 	void AutonomousInit()
 	{
-
+		auton.Reset();
 	}
 
 	void AutonomousPeriodic()
 	{
 
-
+		auton.doAuton();
 		//LED controls
 
 	}
