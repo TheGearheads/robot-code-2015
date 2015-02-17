@@ -13,8 +13,8 @@ int AngleToPot(float angle) {
 	auto pref = Preferences::GetInstance();
 	float minAngle = pref->GetFloat("arm.angle.min");
 	float maxAngle = pref->GetFloat("arm.angle.max");
-	int minPot = pref->GetFloat("arm.pot.min");
-	int maxPot = pref->GetFloat("arm.pot.min");
+	int minPot = pref->GetInt("arm.pot.min");
+	int maxPot = pref->GetInt("arm.pot.max");
 	return Interpolate(angle, minAngle, maxAngle, minPot, maxPot);
 }
 

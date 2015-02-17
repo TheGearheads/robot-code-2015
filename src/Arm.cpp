@@ -22,6 +22,7 @@ Arm::Arm() {
 	//SetMode(kPID);
 	SetMode(kDirect);
 	//controllerRight->Enable();
+	misaligned = false;
 
 	int i = 0;
 	while (1) {
@@ -95,17 +96,21 @@ void Arm::DirectDrive(float input) {
 
 	SetDirection(input > 0 ? kUp : kDown);
 
-	float leftPos = GetPosition(kLeft);
-	float rightPos = GetPosition(kRight);
-	float diff = abs(rightPos - leftPos);
-	float tolerance = pref->GetFloat("arm.tolerance");
+	int leftPos = GetPosition(kLeft);
+	int rightPos = GetPosition(kRight);
+	int diff = abs(rightPos - leftPos);
+	int tolerance = pref->GetInt("arm.tolerance");
+	int hysteresis = pref->GetInt("arm.hysteresis");
+
 
 	SmartDashboard::PutNumber("leftArmPosition", leftPos);
 	SmartDashboard::PutNumber("rightArmPosition", rightPos);
 	SmartDashboard::PutNumber("Tolerance", tolerance);
 	SmartDashboard::PutNumber("Difference", diff);
+	SmartDashboard::PutNumber("Hysteresis", hysteresis);
 
-	if (diff > tolerance) {
+	if (diff > tolerance || (diff > hysteresis && misaligned)) {
+		misaligned = true;
 		if (direction == kUp) {
 			if (rightPos > leftPos) {
 				rightInput = 0;
@@ -119,7 +124,20 @@ void Arm::DirectDrive(float input) {
 				leftInput = 0;
 			}
 		}
+	} else {
+		misaligned = false;
 	}
+
+	int minPot = pref->GetInt("arm.pot.min");
+	int maxPot = pref->GetInt("arm.pot.max");
+	int range = pref->GetInt("arm.range");
+	int speedLimit = pref->GetInt("arm.speedLimit");
+
+	bool inRange = std::max(leftPos, rightPos) > (maxPot - range);
+	inRange |= std::min(leftPos, rightPos) < (minPot + range);
+	leftInput = (inRange && std::abs(leftInput) > speedLimit) ? (std::signbit(leftInput) ? -1 : 1) * speedLimit : leftInput;
+	rightInput = (inRange && std::abs(rightInput) > speedLimit) ? (std::signbit(rightInput) ? -1 : 1) * speedLimit : rightInput;
+
 	motorLeft->Set(leftInput);
 	motorRight->Set(rightInput);
 }

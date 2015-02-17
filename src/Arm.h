@@ -41,6 +41,7 @@ private:
 	float lastPosition;
 	Direction direction = kInvalidDir;
 	std::vector<float> levels;
+	bool misaligned;
 
 	CANTalon* motorLeft;
 	CANTalon* motorRight;
