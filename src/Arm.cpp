@@ -128,15 +128,21 @@ void Arm::DirectDrive(float input) {
 		misaligned = false;
 	}
 
+	SmartDashboard::PutBoolean("Misaligned", misaligned);
+
 	int minPot = pref->GetInt("arm.pot.min");
 	int maxPot = pref->GetInt("arm.pot.max");
 	int range = pref->GetInt("arm.range");
-	int speedLimit = pref->GetInt("arm.speedLimit");
+	float speedLimit = pref->GetFloat("arm.speedLimit");
 
-	bool inRange = std::max(leftPos, rightPos) > (maxPot - range);
-	inRange |= std::min(leftPos, rightPos) < (minPot + range);
+	bool inRange = std::max(leftPos, rightPos) > (maxPot - range) && direction == kUp;
+	inRange |= std::min(leftPos, rightPos) < (minPot + range) && direction == kDown;
 	leftInput = (inRange && std::abs(leftInput) > speedLimit) ? (std::signbit(leftInput) ? -1 : 1) * speedLimit : leftInput;
 	rightInput = (inRange && std::abs(rightInput) > speedLimit) ? (std::signbit(rightInput) ? -1 : 1) * speedLimit : rightInput;
+
+	SmartDashboard::PutBoolean("inRange", inRange);
+	SmartDashboard::PutNumber("leftInput", leftInput);
+	SmartDashboard::PutNumber("rightInput", rightInput);
 
 	motorLeft->Set(leftInput);
 	motorRight->Set(rightInput);
