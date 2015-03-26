@@ -23,6 +23,7 @@ public:
 private:
 	Timer timer;
 	int state;
+	AnalogInput* rotary;
 
 };
 

@@ -13,6 +13,7 @@
 
 
 Auton::Auton() {
+	rotary = new AnalogInput(0);
 	timer.Start();
 	state = 0;
 }
@@ -27,10 +28,10 @@ void Auton::doAuton() {
 	auto arm = Arm::GetInstance();
 	auto grabber = Grabber::GetInstance();
 	auto pref = Preferences::GetInstance();
-	int mode = pref->GetInt("auton.mode");
+	int mode = rotary->GetValue() * 12 / 4096;
 	SmartDashboard::PutNumber("AutonState", state);
 	SmartDashboard::PutNumber("AutonMode", mode);
-	if (mode == 0) {
+	if (mode == 1) {
 		switch (state) {
 		case 0: //Close the grabber
 			grabber->Close();
@@ -82,7 +83,7 @@ void Auton::doAuton() {
 			drive->doDrive(0, 0, 0);
 			arm->DirectDrive(0);
 		}
-	} else if (mode == 1) {
+	} else if (mode == 2) {
 		switch (state) {
 		case 0:	//Close the grabber
 			drive->doDrive(0, 0, 0);
@@ -199,7 +200,7 @@ void Auton::doAuton() {
 			drive->doDrive(0, 0, 0);
 			arm->DirectDrive(0);
 		}
-	} else if (mode == 2) {
+	} else if (mode == 3) {
 		switch (state) {
 		case 0: //Close the arms
 			grabber->Close();
@@ -238,7 +239,7 @@ void Auton::doAuton() {
 			arm->DirectDrive(0);
 
 		}
-	} else if (mode == 3) {
+	} else if (mode == 4) {
 		switch (state) {
 		case 0: //Drive forward
 			drive->doDrive(0, -0.3, 0);
