@@ -19,6 +19,7 @@ Input::Input() : stick(0) {
 	upButton = new Util::Button("input." + profile + ".upButton");
 	downButton = new Util::Button("input." + profile + ".downButton");
 	grabberButton = new Util::Button("input." + profile + ".grabberButton");
+	miniGrabberButton = new Util::Button("input." + profile + ".miniGrabberButton");
 }
 
 float Input::GetX() {
@@ -51,5 +52,10 @@ void Input::GetGrabberInput() {
 		Grabber::GetInstance()->Open();
 	} else {
 		Grabber::GetInstance()->Close();
+	}
+	if (miniGrabberButton->Get()) {
+		Grabber::GetInstance()->Open(Grabber::kMini);
+	} else {
+		Grabber::GetInstance()->Close(Grabber::kMini);
 	}
 }

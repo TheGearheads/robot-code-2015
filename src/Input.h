@@ -26,6 +26,7 @@ Util::Button* speedButton;
 Util::Button* upButton;
 Util::Button* downButton;
 Util::Button* grabberButton;
+Util::Button* miniGrabberButton;
 
 public:
 

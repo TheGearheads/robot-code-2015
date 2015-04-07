@@ -27,11 +27,10 @@ void Auton::doAuton() {
 	auto drive = Drive::GetInstance();
 	auto arm = Arm::GetInstance();
 	auto grabber = Grabber::GetInstance();
-	auto pref = Preferences::GetInstance();
 	int mode = rotary->GetValue() * 12 / 4096;
 	SmartDashboard::PutNumber("AutonState", state);
 	SmartDashboard::PutNumber("AutonMode", mode);
-	if (mode == 1) {
+	if (mode == 1) { //TOTE
 		switch (state) {
 		case 0: //Close the grabber
 			grabber->Close();
@@ -72,9 +71,8 @@ void Auton::doAuton() {
 				state++;
 			}
 			break;
-		case 6:
-			//grabber->Open(); //Not sure if we should drop it, ask Joe
-			//drive->doDrive(0, 0.3, 0);
+		case 6: //Open grabber
+			grabber->Open();
 			if (timer.HasPeriodPassed(0.5)) {
 				state++;
 			}
@@ -83,7 +81,7 @@ void Auton::doAuton() {
 			drive->doDrive(0, 0, 0);
 			arm->DirectDrive(0);
 		}
-	} else if (mode == 2) {
+	} else if (mode == 2) { //TOTE AND BIN
 		switch (state) {
 		case 0:	//Close the grabber
 			drive->doDrive(0, 0, 0);
@@ -108,138 +106,87 @@ void Auton::doAuton() {
 			}
 			break;
 
-		case 3: //Stop, arms down
+		case 3: //Stop, 2nd grabber out
 			drive->doDrive(0, 0, 0);
-			arm->DirectDrive(-0.5);
+			grabber->Open(Grabber::kMini);
 			if (timer.HasPeriodPassed(1.0)) {
 				state++;
 			}
 			break;
 
-		case 4: //Release grabber
-			grabber->Open();
-			if (timer.HasPeriodPassed(0.5)) {
-				state++;
-			}
-			break;
-
-		case 5: //Bring arms down moar
-			arm->DirectDrive(-0.5);
-			if (timer.HasPeriodPassed(1.0)) {
-				state++;
-			}
-			break;
-
-		case 6:	//Stop arms, move forward
-			arm->DirectDrive(0);
-			drive->doDrive(0, -0.5, 0);
-			if (timer.HasPeriodPassed(0.3)) {
-				state++;
-			}
-			break;
-
-		case 7: //Stop driving, close grabber
-			drive->doDrive(0, 0, 0);
-			grabber->Close();
-			if (timer.HasPeriodPassed(0.3)) {
-				state++;
-			}
-			break;
-
-		case 8: //Raise arms
-			arm->DirectDrive(0.5);
-			if (timer.HasPeriodPassed(0.3)) {
-				state++;
-			}
-			break;
-
-		case 9: //Drive forward
-			drive->doDrive(0, -0.2, 0);
-			if (timer.HasPeriodPassed(0.5)) {
-				state++;
-			}
-			break;
-
-		case 10: //Stop arms, rotate robot
-			arm->DirectDrive(0);
+		case 4: //Rotate
 			drive->doDrive(0, 0, -0.3);
-			if (timer.HasPeriodPassed(1.7)) {
+			if (timer.HasPeriodPassed(1.9)) {
 				state++;
 			}
 			break;
 
-		case 11: //Drive forward, over bump
+		case 5: //Drive forward, over bump
 			drive->doDrive(0, -0.3, 0);
-			if (timer.HasPeriodPassed(3)) {
+			if (timer.HasPeriodPassed(4.5)) {
 				state++;
 			}
 			break;
 
-		case 12: //Drive forward, off of bump
-			drive->doDrive(0, -0.2, 0);
-			if (timer.HasPeriodPassed(2.25)) {
-				state++;
-			}
-			break;
-
-		case 13: //Rotate
+		case 6: //Rotate
 			drive->doDrive(0, 0, 0.3);
 			if (timer.HasPeriodPassed(1.7)) {
 				state++;
 			}
 			break;
 
-		case 14: //Stop driving
-			drive->doDrive(0, 0, 0);
-			if (timer.HasPeriodPassed(0.5)) {
-				state++;
-			}
-			break;
-
 		default:
 			drive->doDrive(0, 0, 0);
 			arm->DirectDrive(0);
+			grabber->Close(Grabber::kMini);
 		}
-	} else if (mode == 3) {
+	} else if (mode == 3) { //BIN
 		switch (state) {
-		case 0: //Close the arms
+		case 0: //Close grabber
 			grabber->Close();
 			if (timer.HasPeriodPassed(0.5)) {
 				state++;
 			}
 			break;
-		case 1: //Lift a bit
-			drive->doDrive(0, 0, 0);
+		case 1: //Raise arms a bit
 			arm->DirectDrive(0.5);
 			if (timer.HasPeriodPassed(0.5)) {
 				state++;
 			}
 			break;
-		case 2: //Rotate
-			drive->doDrive(0, 0, -0.3);
-			if (timer.HasPeriodPassed(1.9)) {
+		case 2: //Drive backward
+			drive->doDrive(0, 0.5, 0);
+			arm->DirectDrive(0);
+			if (timer.HasPeriodPassed(2)) {
 				state++;
 			}
 			break;
-		case 3: //Drive forward
+		/*case 3: //Drive forward
 			drive->doDrive(0, -0.3, 0);
-			if (timer.HasPeriodPassed(4)) {
+			if (timer.HasPeriodPassed(3.5)) {
 				state++;
 			}
 			break;
-		case 4: //Stop driving
+		case 4: //Stop driving, bring the arms down
 			drive->doDrive(0, 0, 0);
+			arm->DirectDrive(-0.5);
 			if (timer.HasPeriodPassed(0.5)) {
 				state++;
 			}
 			break;
-
+		case 5: //Open grabber
+			grabber->Open();
+			if (timer.HasPeriodPassed(0.5)) {
+				state++;
+			}
+			break;
+		*/
 		default:
 			drive->doDrive(0, 0, 0);
 			arm->DirectDrive(0);
 
 		}
-	} else if (mode == 4) {
+	} else if (mode == 4) { //DRIVE
 		switch (state) {
 		case 0: //Drive forward
 			drive->doDrive(0, -0.3, 0);
