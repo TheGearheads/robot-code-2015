@@ -13,7 +13,9 @@ bool Button::taskRunning = false;
 void Button::ButtonChecker() {
 	taskRunning = true;
 	while (taskRunning) {
-		DriverStation::GetInstance()->WaitForData(); // Wait for an update from the DriverStation
+		// Can block while initializing, which is notgood
+		//DriverStation::GetInstance()->WaitForData(); // Wait for an update from the DriverStation
+		Wait(0.02);
 		for (auto button : buttons) {
 			button->Update();
 		}
