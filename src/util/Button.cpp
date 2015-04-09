@@ -169,12 +169,19 @@ void Button::Update() {
 	bool newValue;
 	if (type == kButton) {
 		//printf("Updating\n");
-		newValue = stick->GetRawButton(buttonChannel);
+		if (buttonChannel > 0 && buttonChannel <= stick->GetButtonCount()) {
+			newValue = stick->GetRawButton(buttonChannel);
+		}
 	} else if (type == kPOV) {
 		// 8 direction POV, each position is 45° from eachother
-		newValue = (45 * buttonChannel) == stick->GetPOV(povIndex);
+		if (povIndex >= 0 && buttonChannel < stick->GetButtonCount()) {
+			newValue = (45 * buttonChannel) == stick->GetPOV(povIndex);
+		}
 	} else if (type == kAxis) {
-		float axisValue = stick->GetRawAxis(buttonChannel);
+		float axisValue = 0;
+		if (buttonChannel >= 0 && buttonChannel < stick->GetAxisCount()) {
+			axisValue = stick->GetRawAxis(buttonChannel);
+		}
 		if (threshold < 0) {
 			newValue = axisValue < threshold;
 		} else if (threshold > 0) {
