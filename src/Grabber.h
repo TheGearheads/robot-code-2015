@@ -17,6 +17,8 @@
 class Grabber {
 	DoubleSolenoid* grabberSolenoid;
 	DoubleSolenoid* miniGrabberSolenoid;
+	bool statusMain;
+	bool statusMini;
 	Compressor* compressor;
 	static Grabber* instance;
 	Grabber();
@@ -31,6 +33,7 @@ class Grabber {
 public:
 	enum GrabberType { kMain, kMini };
 	static Grabber* GetInstance();
+	bool Get(GrabberType type = kMain);
 	void Open(GrabberType type = kMain);
 	void Close(GrabberType type = kMain);
 

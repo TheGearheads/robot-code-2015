@@ -13,11 +13,11 @@ class LEDController {
 	public:
 		void SetBrightness(uint8_t newBrightness);
 		uint8_t GetBrightness();
-		void Set(int idx, Util::Color led, bool show = false);
-		void Set(int idx, std::vector<Util::Color> values, bool show = false);
+		void Set(Util::Color led, int idx, bool show = false);
+		void Set(std::vector<Util::Color> values, int idx = 0,  bool show = false);
 		Util::Color Get(int idx);
 		void Clear();
-		void Show();
+		void Show(bool refresh = false);
 		void Refresh();
 		void Write(uint8_t* buf, int length);
 		static LEDController* GetInstance();

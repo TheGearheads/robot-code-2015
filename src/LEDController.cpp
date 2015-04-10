@@ -31,33 +31,30 @@ uint8_t LEDController::GetBrightness() {
 	return brightness;
 }
 
-void LEDController::Set(int idx, Util::Color led, bool show /*= false*/) {
+void LEDController::Set(Util::Color led, int idx, bool show /*= false*/) {
 	std::vector<Util::Color> tmp;
 	tmp.push_back(led);
-	Set(idx, tmp, show);
+	Set(tmp, idx, show);
 }
 
 Util::Color LEDController::Get(int idx) {
 	return leds[idx];
 }
 
-void LEDController::Set(int idx, std::vector<Util::Color> values, bool show /*= false*/) {
+void LEDController::Set(std::vector<Util::Color> values, int idx /*= 0*/, bool show /*= false*/) {
 	uint8_t buf[3];
 	buf[0] = 'l';
 	buf[1] = idx;
 	buf[2] = values.size();
 	Write(buf, 3);
 	//for (auto led = values.begin(); led != values.end(); led++) {
-	if (show) {
-		for (uint16_t i = 0; i < values.size(); i++) {
-			Util::RGB led = values[i];
-			leds[idx + i] = led;
-			buf[2] = led.r;
-			buf[1] = led.g;
-			buf[0] = led.b;
-			Write(buf, 3);
-		}
-		Show(false);
+	for (uint16_t i = 0; i < values.size(); i++) {
+		Util::RGB led = values[i];
+		leds[idx + i] = led;
+		buf[0] = led.r;
+		buf[1] = led.g;
+		buf[2] = led.b;
+		Write(buf, 3);
 	}
 }
 
@@ -67,7 +64,7 @@ void LEDController::Clear() {
 	Write(buf, 1);
 }
 
-void LEDController::Show() {
+void LEDController::Show(bool refresh /*= false*/) {
 	if (refresh) {
 		Refresh();
 	}
@@ -78,16 +75,16 @@ void LEDController::Show() {
 
 void LEDController::Refresh() {
 	Clear();
-	Set(0, leds, true); // Set all LEDs to themselves
+	Set(leds, 0, true); // Set all LEDs to themselves
 	Show();
 }
 
 void LEDController::Write(uint8_t* buf, int length) {
-	printf("Writing datas: ");
-	for (int i = 0; i < length; i++) {
-		printf("%02x ", buf[i]);
-	}
-	printf("\n");
+	//printf("Writing datas: ");
+	//for (int i = 0; i < length; i++) {
+		//printf("%02x ", buf[i]);
+	//}
+	//printf("\n");
 	controller->WriteBulk(buf, length);
 }
 

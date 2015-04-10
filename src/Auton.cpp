@@ -11,11 +11,21 @@
 #include "Grabber.h"
 #include "Auton.h"
 
+Auton* Auton::GetInstance() {
+	if (instance == nullptr) {
+			instance = new Auton();
+	}
+	return instance;
+}
 
 Auton::Auton() {
 	rotary = new AnalogInput(0);
 	timer.Start();
 	state = 0;
+}
+
+int Auton::GetMode() {
+	return rotary->GetValue() * 12 / 4096;
 }
 
 void Auton::Reset() {
@@ -27,7 +37,7 @@ void Auton::doAuton() {
 	auto drive = Drive::GetInstance();
 	auto arm = Arm::GetInstance();
 	auto grabber = Grabber::GetInstance();
-	int mode = rotary->GetValue() * 12 / 4096;
+	int mode = GetMode();
 	SmartDashboard::PutNumber("AutonState", state);
 	SmartDashboard::PutNumber("AutonMode", mode);
 	if (mode == 1) { //TOTE
@@ -200,3 +210,5 @@ void Auton::doAuton() {
 		}
 	}
 }
+
+Auton* Auton::instance = nullptr;

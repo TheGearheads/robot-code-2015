@@ -2,58 +2,53 @@
 #include "Drive.h"
 #include "Input.h"
 #include "Auton.h"
+#include "LEDStrip.h"
+#include "LEDController.h"
+#include "LEDs.h"
 
 class Robot: public IterativeRobot
 {
 private:
 	LiveWindow *lw = NULL;
-	Drive drive;
+	Drive* drive;
 	Joystick stick;
 	Input input;
-	Auton auton;
+	Auton* auton;
+	LEDs* leds;
 
 public:
 	Robot() : IterativeRobot(), stick(0){
-
+		auton = Auton::GetInstance();
+		drive = Drive::GetInstance();
+		leds = LEDs::GetInstance();
 	}
 
-	void RobotInit()
-	{
-		//comment out next line to set for Joystick
+	void RobotInit() {
 		lw = LiveWindow::GetInstance();
-		//Arm::GetInstance()->SetMode(Arm::kDirect);
 	}
 
-	void AutonomousInit()
-	{
-		auton.Reset();
+	void AutonomousInit() {
+		auton->Reset();
 	}
 
-	void AutonomousPeriodic()
-	{
-
-		auton.doAuton();
-		//LED controls
-
+	void DisabledInit() {
 	}
 
-	void TeleopInit()
-	{
+	void AutonomousPeriodic() {
+		auton->doAuton();
+	}
+
+	void TeleopInit() {
 		SmartDashboard::PutBoolean("Following", false);
-
 	}
 
-	void TeleopPeriodic()
-	{
-		drive.doDrive(input.GetX(), input.GetY(), input.GetRotation());
+	void TeleopPeriodic() {
+		drive->doDrive(input.GetX(), input.GetY(), input.GetRotation());
 		input.GetGrabberInput();
 		input.GetArmInput();
-		//LED controls
-
 	}
 
-	void TestPeriodic()
-	{
+	void TestPeriodic() {
 		lw->Run();
 	}
 };

@@ -1,4 +1,5 @@
 #include "Color.h"
+//#include <stdio.h>
 
 namespace Util {
 
@@ -65,7 +66,7 @@ void Color::FromHSV(float h, float s, float v) {
 	}
 
 	float m = v - chroma;
-	FromRGB(r1 + m, g1 + m, b1 + m);
+	FromRGB(255 * (r1 + m), 255 * (g1 + m), 255 * (b1 + m));
 }
 
 void Color::FromRGB(RGB newColor) {

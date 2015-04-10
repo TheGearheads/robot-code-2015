@@ -12,18 +12,21 @@
 #include "Drive.h"
 #include "Arm.h"
 #include "Grabber.h"
+#include "LEDStrip.h"
 
 class Auton {
 public:
 	Auton();
+	int GetMode();
 	void Reset();
 	void doAuton();
-
+	static Auton* GetInstance();
 
 private:
 	Timer timer;
 	int state;
 	AnalogInput* rotary;
+	static Auton* instance;
 
 };
 

@@ -30,15 +30,39 @@ Grabber* Grabber::GetInstance() {
 	return instance;
 }
 
+bool Grabber::Get(GrabberType type /*= kMain*/) {
+	if (type == kMain) {
+		return statusMain;
+	} else {
+		return statusMini;
+	}
+}
+
 void Grabber::Open(GrabberType type /*= kMain*/) {
-	DoubleSolenoid* solenoid = (type == kMain) ? grabberSolenoid : miniGrabberSolenoid;
-	SmartDashboard::PutBoolean((type == kMain) ? "grabber" : "miniGrabber", true);
+	DoubleSolenoid* solenoid;
+	if (type == kMain) {
+		statusMain = true;
+		solenoid = grabberSolenoid;
+	} else {
+		statusMini = true;
+		solenoid = miniGrabberSolenoid;
+	}
+	SmartDashboard::PutBoolean("grabber", statusMain);
+	SmartDashboard::PutBoolean("miniGrabber", statusMini);
 	solenoid->Set(DoubleSolenoid::kForward);
 }
 
 void Grabber::Close(GrabberType type /*= kMain*/) {
-	DoubleSolenoid* solenoid = (type == kMain) ? grabberSolenoid : miniGrabberSolenoid;
-	SmartDashboard::PutBoolean((type == kMain) ? "grabber" : "miniGrabber", false);
+	DoubleSolenoid* solenoid;
+	if (type == kMain) {
+		statusMain = false;
+		solenoid = grabberSolenoid;
+	} else {
+		statusMini = false;
+		solenoid = miniGrabberSolenoid;
+	}
+	SmartDashboard::PutBoolean("grabber", statusMain);
+	SmartDashboard::PutBoolean("miniGrabber", statusMini);
 	solenoid->Set(DoubleSolenoid::kReverse);
 }
 

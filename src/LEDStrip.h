@@ -13,8 +13,8 @@
 class LEDStrip {
 	public:
 		LEDStrip(int idx, int count);
-		void Set(int idx, Util::Color led, bool show = false);
-		void Set(int idx, std::vector<Util::Color> values, bool show = false);
+		void Set(Util::Color led, int idx, bool show = false);
+		void Set(std::vector<Util::Color> values, int idx = 0, bool show = false);
 		Util::Color Get(int idx);
 		void Clear();
 		void Show();

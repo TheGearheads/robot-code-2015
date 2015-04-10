@@ -2,12 +2,12 @@
 
 LEDStrip::LEDStrip(int idx, int count) : start_idx(idx), count(count) { }
 
-void LEDStrip::Set(int idx, Util::Color led, bool show /*= false*/) {
-	LEDController::GetInstance()->Set(start_idx + idx, led, show);
+void LEDStrip::Set(Util::Color led, int idx, bool show /*= false*/) {
+	LEDController::GetInstance()->Set(led, start_idx + idx, show);
 }
 
-void LEDStrip::Set(int idx, std::vector<Util::Color> values, bool show /*= false*/) {
-	LEDController::GetInstance()->Set(start_idx + idx, values, show);
+void LEDStrip::Set(std::vector<Util::Color> values, int idx /*= 0*/, bool show /*= false*/) {
+	LEDController::GetInstance()->Set(values, start_idx + idx, show);
 }
 
 Util::Color LEDStrip::Get(int idx) {
@@ -17,7 +17,7 @@ Util::Color LEDStrip::Get(int idx) {
 void LEDStrip::Clear() {
 	std::vector<Util::Color> tmp;
 	tmp.resize(count);
-	Set(start_idx, tmp, true);
+	Set(tmp, start_idx, true);
 }
 
 void LEDStrip::Show() {

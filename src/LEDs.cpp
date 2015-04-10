@@ -1,103 +1,168 @@
 /*
  * LEDs.cpp
- *
- *  Created on: Jan 24, 2015
- *      Author: Gabs, Jeff, Joe
  */
 
 #include "LEDs.h"
 
-/**
- * LEDs class to control RGB LEDs
- *
- * @param relayChannel The LEDs Relay channel
- * @param redChannel The PWM channel to give the Red signal
- * @param greenChannel The PWM channel to give the Green signal
- * @param blueChannel The PWM channel to give the Blue signal
- */
-LEDs::LEDs(uint32_t relayChannel, uint32_t redChannel, uint32_t greenChannel, uint32_t blueChannel) : power(relayChannel),
-red(redChannel), green(greenChannel), blue(blueChannel) {
-	power.Set(Relay::kOn);
-}
+Task LEDs::task("LEDRunner", (FUNCPTR)LEDRunner);
+bool LEDs::taskRunning = false;
 
 /**
- * Set the color of the LEDs
- *
- * Takes an RGB triplet
- * @param r Red [0, 1]
- * @param g Green [0, 1]
- * @param b Blue [0, 1]
+ * Task to handle the display of LEDs
  */
-void LEDs::Set(float r, float g, float b) {
-	red.Set(r);
-	green.Set(g);
-	blue.Set(b);
-}
+void LEDs::LEDRunner() {
+	// This is kind of ugly :(
+	taskRunning = true;
+	auto ds = DriverStation::GetInstance();
+	int mode = 0;
+	//float hueOutput = 0;
+	auto leds = LEDController::GetInstance();
+	leds->SetBrightness(30);
+	LEDStrip frontLeft(0, 8);
+	LEDStrip rearLeft(8, 16);
+	LEDStrip rearRight(24, 16);
+	LEDStrip frontRight(40, 8);
+	std::vector<Util::Color> tmp;
+	while (taskRunning) {
+		Wait(0.2);
+		if (ds->IsDisabled()) {
+			tmp.clear(); tmp.resize(16, 0xffff00);
+			if (!ds->IsDSAttached()) {
+				// Not attached to the DS, so, alternate yellow/off
+				for (int i = 0; i < 8; i++) {
+					tmp[i * 2] = 0x000000;
+				}
+			}
+			rearLeft.Set(tmp);
+			rearRight.Set(tmp);
+			tmp.resize(8);
+			frontRight.Set(tmp);
+			frontLeft.Set(tmp);
+			mode = Auton::GetInstance()->GetMode();
+			tmp.clear();
+			tmp.resize(3);
+			tmp[0] = mode & 1 ? 0xffff00 : 0x00;
+			tmp[1] = mode & 2 ? 0xffff00 : 0x00;
+			tmp[2] = mode & 4 ? 0xffff00 : 0x00;
+			rearRight.Set(tmp, 0);
 
-/**
- * Set the color of the LEDs
- *
- * <a href="rttps://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV">HSV to RGB conversion</a>
- *
- * Takes an HSV triplet
- * @param h Hue [0, 360)
- * @param s Saturation [0, 1]
- * @param v Value [0, 1]
- */
-void LEDs::HSV(float h, float s, float v) {
-	h = fmod(h, 360);
-	float chroma = v * s;
-	float hPrime = h / 60.0;
-	float X = chroma * (1.0 - fabs(fmod(hPrime, 2) - 1));
+			tmp.clear(); tmp.resize(6);
+			tmp[0] = ds->IsDSAttached() ? 0x00ff00 : 0x00;
+			tmp[1] = ds->IsFMSAttached() ? 0x00ff00 : 0x00;
+			float hueOutput = Interpolate(ds->GetBatteryVoltage(), 12.0f, 13.0f, 0.0f, 120.0f);
+			//hueOutput = ((int)hueOutput + 5) % 360;
+			//float hueOutput
+			//printf("Voltage: %f (%f) ", ds->GetBatteryVoltage(), hueOutput);
+			tmp[2] = Util::Color(hueOutput, 1.0, 0.75);
+			//Util::RGB c = tmp[2];
+			//printf("(%d, %d, %d)\n", c.r, c.g, c.b);
 
-	float r1, g1, b1;
+			auto position = ds->GetLocation();
+			auto alliance = ds->GetAlliance();
+			Util::Color allianceColor = alliance == DriverStation::kRed ? 0xff0000 : (alliance == DriverStation::kBlue ? 0x0000ff : 0xffff00);
+			if (position) {
+				tmp[2 + position] = allianceColor;
+			//} else {
+				//position += 1;
+				//tmp[2 + position] = allianceColor;
+				//tmp[2 + position + 1] = allianceColor;
+				//tmp[2 + position + 2] = allianceColor;
+			}
+			rearRight.Set(tmp, 3);
+			rearRight.Show();
+		} else {
+			if (ds->IsAutonomous()) {
+				auto alliance = ds->GetAlliance();
+				Util::Color allianceColor = alliance == DriverStation::kRed ? 0xff0000 : (alliance == DriverStation::kBlue ? 0x0000ff : 0xffff00);
+				tmp.clear();
+				tmp.resize(16, allianceColor);
+				rearLeft.Set(tmp);
+				rearRight.Set(tmp);
+				tmp.resize(8);
+				frontLeft.Set(tmp);
+				frontRight.Set(tmp);
+			} else if (ds->IsOperatorControl()) {
+				double timeLeft = ds->GetMatchTime();
+				tmp.clear();
+				tmp.resize(16, 0xffff00);
+				if (timeLeft < 0 || timeLeft > 30) {
+					// All yellow
+				} else if (timeLeft > 20) {
+					for (int i = 0; i < 8; i++) {
+						tmp[i * 2] = 0x00ff00;
+					}
+				} else if (timeLeft > 5) {
+					// off and green->red
+					float hueOutput = Interpolate((float)timeLeft, 5.0f, 20.f, 0.0f, 120.0f);
+					for (int i = 0; i < 8; i++) {
+						tmp[i * 2 + 1] = 0x00;
+						tmp[i * 2] = Util::Color(hueOutput, 1.0, 0.75);
+						//tmp[i * 2] = 0x00ff00;
+					}
+				} else {
+					// Just red
+					tmp.clear();
+					tmp.resize(16, 0xff0000);
+				}
+				if (Grabber::GetInstance()->Get(Grabber::kMini)) {
+					tmp[0] = 0xff00ff;
+					tmp[15] = 0xff00ff;
+				}
+				if (Grabber::GetInstance()->Get(Grabber::kMain)) {
+					tmp[1] = 0x00ffff;
+					tmp[14] = 0x00ffff;
+				}
+				rearLeft.Set(tmp);
+				rearRight.Set(tmp);
+				tmp.resize(8);
+				if (Grabber::GetInstance()->Get(Grabber::kMini)) {
+					tmp[7] = 0xff00ff;
+				}
+				if (Grabber::GetInstance()->Get(Grabber::kMain)) {
+					tmp[6] = 0x00ffff;
+				}
+				frontLeft.Set(tmp);
+				frontRight.Set(tmp);
 
-	if (0 <= hPrime && hPrime < 1) {
-		r1 = chroma;
-		g1 = X;
-		b1 = 0;
-	} else if (1 <= hPrime && hPrime < 2) {
-		r1 = X;
-		g1 = chroma;
-		b1 = 0;
-	} else if (2 <= hPrime && hPrime < 3) {
-		r1 = 0;
-		g1 = chroma;
-		b1 = X;
-	} else if (3 <= hPrime && hPrime < 4) {
-		r1 = 0;
-		g1 = X;
-		b1 = chroma;
-	} else if (4 <= hPrime && hPrime < 5) {
-		r1 = X;
-		g1 = 0;
-		b1 = chroma;
-	} else if (5 <= hPrime && hPrime < 6) {
-		r1 = chroma;
-		g1 = 0;
-		b1 = X;
+				//printf("Match Time: %f\n", ds->GetMatchTime());
+
+			}
+		}
+		frontLeft.Show();
+		rearLeft.Show();
+		frontRight.Show();
+		rearRight.Show();
 	}
-
-	float m = v - chroma;
-	Set(r1 + m, g1 + m, b1 + m);
 }
 
-/*
- * should be called once in the periodic functions
- * entirely untested
- * -Jeff
- *
- * @param sat Saturation [0,1] 1 by default
- * @param val Value [0,1] 1 by default
+/**
+ *  Enable or disable the LEDRunner task
  */
-void LEDs::Rainbow(float sat /*= 1*/, float val /*= 1*/) {
-	//Set the hue
-	HSV(lastHue, sat, val);
-
-	//Manipulate lastHue
-	lastHue++;
-	if (lastHue == 360) {
-		lastHue = 0;
+void LEDs::SetEnabled(bool enabled) {
+	if (enabled == taskRunning) {
+		return;
+	}
+	if (enabled) {
+		task.Start();
+	} else {
+		taskRunning = false;
+		while (task.Verify()) { // Wait for task to end
+			Wait(0.02);
+		}
+		task.Stop();
 	}
 }
+
+LEDs* LEDs::GetInstance() {
+	if (instance == nullptr) {
+			instance = new LEDs();
+	}
+	return instance;
+}
+
+LEDs::LEDs() {
+	SetEnabled(true);
+}
+
+LEDs* LEDs::instance = nullptr;
 
