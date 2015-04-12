@@ -6,6 +6,7 @@
 #define SRC_UTIL_BUTTON_H_
 
 #include <vector>
+#include <atomic>
 #include "WPILib.h"
 
 namespace Util {
@@ -41,7 +42,7 @@ class Button {
 
 		static std::vector<Button*> buttons;
 		static Task task;
-		static bool taskRunning;
+		static std::atomic_flag taskRunning;
 
 		static void ButtonChecker();
 		static void SetEnabled(bool enabled);

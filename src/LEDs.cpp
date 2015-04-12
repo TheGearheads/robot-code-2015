@@ -5,14 +5,13 @@
 #include "LEDs.h"
 
 Task LEDs::task("LEDRunner", (FUNCPTR)LEDRunner);
-bool LEDs::taskRunning = false;
+std::atomic_flag LEDs::taskRunning = ATOMIC_FLAG_INIT;
 
 /**
  * Task to handle the display of LEDs
  */
 void LEDs::LEDRunner() {
 	// This is kind of ugly :(
-	taskRunning = true;
 	auto ds = DriverStation::GetInstance();
 	int mode = 0;
 	//float hueOutput = 0;
@@ -23,7 +22,7 @@ void LEDs::LEDRunner() {
 	LEDStrip rearRight(24, 16);
 	LEDStrip frontRight(40, 8);
 	std::vector<Util::Color> tmp;
-	while (taskRunning) {
+	while (taskRunning.test_and_set()) {
 		Wait(0.2);
 		if (ds->IsDisabled()) {
 			tmp.clear(); tmp.resize(16, 0xffff00);
@@ -108,7 +107,7 @@ void LEDs::LEDRunner() {
 					tmp[0] = 0xff00ff;
 					tmp[15] = 0xff00ff;
 				}
-				if (Grabber::GetInstance()->Get(Grabber::kMain)) {
+				if (!Grabber::GetInstance()->Get(Grabber::kMain)) {
 					tmp[1] = 0x00ffff;
 					tmp[14] = 0x00ffff;
 				}
@@ -118,7 +117,7 @@ void LEDs::LEDRunner() {
 				if (Grabber::GetInstance()->Get(Grabber::kMini)) {
 					tmp[7] = 0xff00ff;
 				}
-				if (Grabber::GetInstance()->Get(Grabber::kMain)) {
+				if (!Grabber::GetInstance()->Get(Grabber::kMain)) {
 					tmp[6] = 0x00ffff;
 				}
 				frontLeft.Set(tmp);
@@ -139,13 +138,12 @@ void LEDs::LEDRunner() {
  *  Enable or disable the LEDRunner task
  */
 void LEDs::SetEnabled(bool enabled) {
-	if (enabled == taskRunning) {
-		return;
-	}
 	if (enabled) {
-		task.Start();
+		if (!taskRunning.test_and_set()) { // Test if started, and if not, start it
+			task.Start();
+		}
 	} else {
-		taskRunning = false;
+		taskRunning.clear();
 		while (task.Verify()) { // Wait for task to end
 			Wait(0.02);
 		}

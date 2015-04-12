@@ -8,6 +8,7 @@
 #ifndef SRC_LEDS_H_
 #define SRC_LEDS_H_
 
+#include <atomic>
 #include "LEDStrip.h"
 #include "Auton.h"
 #include "Grabber.h"
@@ -21,7 +22,7 @@ class LEDs {
 
 	private:
 		static Task task;
-		static bool taskRunning;
+		static std::atomic_flag taskRunning;
 		static void LEDRunner();
 		static LEDs* instance;
 

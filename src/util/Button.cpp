@@ -5,14 +5,13 @@ namespace Util {
 
 std::vector<Button*> Button::buttons;
 Task Button::task("ButtonChecker", (FUNCPTR)ButtonChecker);
-bool Button::taskRunning = false;
+std::atomic_flag Button::taskRunning = ATOMIC_FLAG_INIT;
 
 /**
  * Task to periodically check button input
  */
 void Button::ButtonChecker() {
-	taskRunning = true;
-	while (taskRunning) {
+	while (taskRunning.test_and_set()) {
 		// Can block while initializing, which is notgood
 		//DriverStation::GetInstance()->WaitForData(); // Wait for an update from the DriverStation
 		Wait(0.02);
@@ -26,13 +25,12 @@ void Button::ButtonChecker() {
  *  Enable or disable the ButtonChecker task
  */
 void Button::SetEnabled(bool enabled) { // Enable or disable the ButtonChecker task
-	if (enabled == taskRunning) {
-		return;
-	}
 	if (enabled) {
-		task.Start();
+		if (!taskRunning.test_and_set()) { // Test if started, and if not, start it
+			task.Start();
+		}
 	} else {
-		taskRunning = false;
+		taskRunning.clear();
 		while (task.Verify()) { // Wait for task to end
 			Wait(0.02);
 		}
