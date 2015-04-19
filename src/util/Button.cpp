@@ -6,18 +6,19 @@ namespace Util {
 std::vector<Button*> Button::buttons;
 Task Button::task("ButtonChecker", (FUNCPTR)ButtonChecker);
 std::atomic_flag Button::taskRunning = ATOMIC_FLAG_INIT;
+std::mutex Button::buttonsMutex;
 
 /**
  * Task to periodically check button input
  */
 void Button::ButtonChecker() {
 	while (taskRunning.test_and_set()) {
-		// Can block while initializing, which is notgood
-		//DriverStation::GetInstance()->WaitForData(); // Wait for an update from the DriverStation
 		Wait(0.02);
+		buttonsMutex.lock();
 		for (auto button : buttons) {
 			button->Update();
 		}
+		buttonsMutex.unlock();
 	}
 }
 
@@ -43,9 +44,10 @@ void Button::SetEnabled(bool enabled) { // Enable or disable the ButtonChecker t
  * @param buttonPtr Pointer to a Button
  */
 void Button::AddButton(Button* buttonPtr) {
-	SetEnabled(false);
-	buttons.push_back(buttonPtr); // Add new button
 	SetEnabled(true);
+	buttonsMutex.lock();
+	buttons.push_back(buttonPtr); // Add new button
+	buttonsMutex.unlock();
 }
 
 /**
@@ -53,9 +55,9 @@ void Button::AddButton(Button* buttonPtr) {
  * @param buttonPtr Pointer to a Button
  */
 void Button::DelButton(Button* buttonPtr) {
-	SetEnabled(false);
+	buttonsMutex.lock();
 	Button::buttons.erase(std::remove(Button::buttons.begin(), Button::buttons.end(), buttonPtr), Button::buttons.end());
-	SetEnabled(true);
+	buttonsMutex.unlock();
 }
 
 /**
@@ -108,7 +110,7 @@ Button::Button(std::string buttonConfig) {
 	config = buttonConfig;
 
 	if (!pref->ContainsKey(buttonConfig.c_str())) {
-		DriverStation::ReportError("Button] Attempting to load config '" + buttonConfig + "' and could not find it");
+		DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and could not find it\n");
 		type = kInvalid;
 		return;
 	} else {
@@ -125,7 +127,7 @@ Button::Button(std::string buttonConfig) {
 		} else if (modeStr == "raw") {
 			SetMode(kRaw);
 		} else {
-			DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and found an unknown mode '" + modeStr + "'. Defaulting to 'raw'");
+			DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and found an unknown mode '" + modeStr + "'. Defaulting to 'raw'\n");
 			SetMode(kRaw);
 		}
 
@@ -142,7 +144,7 @@ Button::Button(std::string buttonConfig) {
 			type = kVirtual;
 			otherButton = Button::FindButton(pref->GetString(buttonConfig.c_str()));
 		} else {
-			DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and found an unknown type '" + typeStr + "'. Defaulting to 'raw'");
+			DriverStation::ReportError("[Button] Attempting to load config '" + buttonConfig + "' and found an unknown type '" + typeStr + "'. Defaulting to 'raw'\n");
 			type = kButton;
 		}
 		printf("[Button] Loaded config '%s', stick '%d', type '%s', mode '%s', channel '%d'\n", buttonConfig.c_str(), stickNum, typeStr.c_str(), modeStr.c_str(), buttonChannel);

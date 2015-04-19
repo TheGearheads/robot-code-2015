@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <atomic>
+#include <mutex>
 #include "WPILib.h"
 
 namespace Util {
@@ -43,6 +44,7 @@ class Button {
 		static std::vector<Button*> buttons;
 		static Task task;
 		static std::atomic_flag taskRunning;
+		static std::mutex buttonsMutex;
 
 		static void ButtonChecker();
 		static void SetEnabled(bool enabled);
